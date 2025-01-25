@@ -1,0 +1,388 @@
+Du:
+import numpy as np
+import matplotlib.pyplot as plt
+
+arr0 = np.loadtxt("../data_topology_2/energy_consumption_tp2_mW.csv", delimiter=",")
+arr1 = np.loadtxt("../data_topology_2/energy_consumption_tp2_mW_including_receiver.csv", delimiter=",")
+arr3 = np.loadtxt("../data_topology_2/energy_consumption_tp2_mW_including_gateway_receiver.csv", delimiter=",")
+
+plt.hist(arr0, bins=20, edgecolor='black')
+plt.xlabel("Energieverbrauch (mW)")
+plt.ylabel("Anzahl der Knoten")
+plt.savefig("../plots/hist_mW_receiver.svg")
+plt.show()
+ 
+i want to plot these 3 next to each other
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To plot the three histograms next to each other, you can use subplots in Matplotlib to create a figure with multiple axes. Here's how you can modify your code to display the three histograms side by side:
+
+python
+Kopieren
+Bearbeiten
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load the data
+arr0 = np.loadtxt("../data_topology_2/energy_consumption_tp2_mW.csv", delimiter=",")
+arr1 = np.loadtxt("../data_topology_2/energy_consumption_tp2_mW_including_receiver.csv", delimiter=",")
+arr3 = np.loadtxt("../data_topology_2/energy_consumption_tp2_mW_including_gateway_receiver.csv", delimiter=",")
+
+# Create subplots
+fig, axes = plt.subplots(1, 3, figsize=(18, 6), sharey=True)  # 1 row, 3 columns
+
+# Plot the histograms
+axes[0].hist(arr0, bins=20, edgecolor='black')
+axes[0].set_title("Ohne Empfänger")
+axes[0].set_xlabel("Energieverbrauch (mW)")
+axes[0].set_ylabel("Anzahl der Knoten")
+
+axes[1].hist(arr1, bins=20, edgecolor='black')
+axes[1].set_title("Mit Empfänger")
+axes[1].set_xlabel("Energieverbrauch (mW)")
+
+axes[2].hist(arr3, bins=20, edgecolor='black')
+axes[2].set_title("Mit Gateway-Empfänger")
+axes[2].set_xlabel("Energieverbrauch (mW)")
+
+# Save and show the plot
+plt.tight_layout()  # Adjust layout to prevent overlap
+plt.savefig("../plots/hist_mW_receiver_comparison.svg")
+plt.show()
+
+Key points in the updated code:
+plt.subplots(1, 3): This creates a figure with 1 row and 3 columns of subplots.
+sharey=True: This makes all subplots share the same y-axis, allowing for easy comparison of the histograms.
+tight_layout(): This adjusts the layout to prevent overlapping of subplot elements.
+figsize=(18, 6): This sets the figure size to make it wide enough to comfortably fit three plots.
+
+This will generate and save a plot with three histograms side by side, each labeled appropriately.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+what is anzahl der knoten in english
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+"Anzahl der Knoten" translates to "Number of Nodes" in English.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+import numpy as np
+
+arr = np.loadtxt("../data_topology_2/data_lille_cleaned.csv", delimiter=",")
+
+
+i want the ratio of values (nodes reached) to nan (nodes not reached) for each row and then an average for all
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To calculate the ratio of non-NaN values (nodes reached) to NaN values (nodes not reached) for each row and then compute the average ratio across all rows, you can use the following steps:
+
+Count the non-NaN values in each row.
+Count the NaN values in each row.
+Calculate the ratio of non-NaN to NaN for each row.
+Compute the average of these ratios.
+
+Here's the Python code to achieve this:
+
+python
+Kopieren
+Bearbeiten
+import numpy as np
+
+# Load the data
+arr = np.loadtxt("../data_topology_2/data_lille_cleaned.csv", delimiter=",")
+
+# Calculate the ratio of non-NaN values to NaN values for each row
+ratios = []
+for row in arr:
+    non_nan_count = np.count_nonzero(~np.isnan(row))  # Count non-NaN values
+    nan_count = np.count_nonzero(np.isnan(row))       # Count NaN values
+    if nan_count > 0:
+        ratio = non_nan_count / nan_count            # Calculate ratio
+    else:
+        ratio = np.inf                               # Handle division by zero if no NaN values
+    ratios.append(ratio)
+
+# Calculate the average ratio across all rows
+average_ratio = np.mean(ratios)
+
+print(f"Average ratio of nodes reached to nodes not reached: {average_ratio}")
+
+Explanation:
+np.isnan(row): Identifies NaN values in each row.
+np.count_nonzero(~np.isnan(row)): Counts the number of non-NaN values (nodes reached).
+np.count_nonzero(np.isnan(row)): Counts the number of NaN values (nodes not reached).
+ratio = non_nan_count / nan_count: Calculates the ratio for each row. If a row has no NaN values, the ratio is set to infinity (np.inf).
+np.mean(ratios): Calculates the average of all ratios.
+
+This code will give you the average ratio of nodes reached to nodes not reached across all rows in your dataset.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+didnt mean ratio i mean average number of nans and average number of values
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To compute the average number of NaN values and the average number of non-NaN values (nodes reached) per row, you can follow these steps:
+
+Count the number of NaN values in each row.
+Count the number of non-NaN values in each row.
+Compute the average number of NaN values across all rows.
+Compute the average number of non-NaN values across all rows.
+
+Here's how you can implement this:
+
+python
+Kopieren
+Bearbeiten
+import numpy as np
+
+# Load the data
+arr = np.loadtxt("../data_topology_2/data_lille_cleaned.csv", delimiter=",")
+
+# Initialize counters
+nan_counts = []
+non_nan_counts = []
+
+# Iterate over each row to count NaN and non-NaN values
+for row in arr:
+    nan_count = np.count_nonzero(np.isnan(row))        # Count NaN values
+    non_nan_count = np.count_nonzero(~np.isnan(row))   # Count non-NaN values
+    nan_counts.append(nan_count)
+    non_nan_counts.append(non_nan_count)
+
+# Calculate the average number of NaN and non-NaN values
+average_nans = np.mean(nan_counts)
+average_non_nans = np.mean(non_nan_counts)
+
+print(f"Average number of NaNs per row: {average_nans}")
+print(f"Average number of non-NaN values per row: {average_non_nans}")
+
+Explanation:
+np.isnan(row): Identifies NaN values in each row.
+np.count_nonzero(np.isnan(row)): Counts the number of NaN values.
+np.count_nonzero(~np.isnan(row)): Counts the number of non-NaN values (nodes reached).
+np.mean(nan_counts): Computes the average number of NaN values per row.
+np.mean(non_nan_counts): Computes the average number of non-NaN values per row.
+
+This will give you the average number of nodes not reached (NaNs) and nodes reached (non-NaN values) per row.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+and which row had the most nan values and which row had the most non nan values
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To find which row has the most NaN values and which row has the most non-NaN values, you can modify the code to keep track of the row indices with the maximum counts. Here’s the complete code to achieve that:
+
+python
+Kopieren
+Bearbeiten
+import numpy as np
+
+# Load the data
+arr = np.loadtxt("../data_topology_2/data_lille_cleaned.csv", delimiter=",")
+
+# Initialize counters and trackers
+nan_counts = []
+non_nan_counts = []
+max_nans_row_index = -1
+max_non_nans_row_index = -1
+max_nans_count = -1
+max_non_nans_count = -1
+
+# Iterate over each row to count NaN and non-NaN values
+for index, row in enumerate(arr):
+    nan_count = np.count_nonzero(np.isnan(row))        # Count NaN values
+    non_nan_count = np.count_nonzero(~np.isnan(row))   # Count non-NaN values
+    
+    # Append counts to lists
+    nan_counts.append(nan_count)
+    non_nan_counts.append(non_nan_count)
+    
+    # Track row with maximum NaN values
+    if nan_count > max_nans_count:
+        max_nans_count = nan_count
+        max_nans_row_index = index
+    
+    # Track row with maximum non-NaN values
+    if non_nan_count > max_non_nans_count:
+        max_non_nans_count = non_nan_count
+        max_non_nans_row_index = index
+
+# Calculate the average number of NaN and non-NaN values
+average_nans = np.mean(nan_counts)
+average_non_nans = np.mean(non_nan_counts)
+
+# Print results
+print(f"Average number of NaNs per row: {average_nans}")
+print(f"Average number of non-NaN values per row: {average_non_nans}")
+print(f"Row with most NaNs: {max_nans_row_index} (NaNs: {max_nans_count})")
+print(f"Row with most non-NaNs: {max_non_nans_row_index} (Non-NaNs: {max_non_nans_count})")
+
+Explanation:
+enumerate(arr): Used to keep track of the row index while iterating.
+max_nans_count & max_non_nans_count: Store the maximum counts of NaN and non-NaN values.
+max_nans_row_index & max_non_nans_row_index: Store the indices of the rows with the maximum counts of NaN and non-NaN values.
+The if conditions inside the loop update the maximum counts and corresponding row indices as necessary.
+
+This code will print:
+
+The average number of NaN values per row.
+The average number of non-NaN values per row.
+The index of the row with the most NaN values and the count of NaNs in that row.
+The index of the row with the most non-NaN values and the count of non-NaNs in that row.
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+import numpy as np
+
+arr = np.loadtxt("../data_topology_2/data_lille_cleaned.csv")
+
+nan_counts = []
+non_nan_counts = []
+max_nans_row_index = -1
+max_non_nans_row_index = -1
+max_nans_count = -1
+max_non_nans_count = -1
+
+for index, row in enumerate(arr):
+    nan_count = np.count_nonzero(np.isnan(row))
+    non_nan_count = np.count_nonzero(~np.isnan(row))
+
+    nan_counts.append(nan_count)
+    non_nan_counts.append(non_nan_count)
+
+    if nan_count > max_nans_count:
+        max_nans_count = nan_count
+        max_nans_row_index = index
+
+    if non_nan_count > max_non_nans_count:
+        max_non_nans_count = non_nan_count
+        max_non_nans_row_index = index
+
+average_nans = np.mean(nan_counts)
+average_non_nans = np.mean(non_nan_counts)
+
+print(f"Average number of NaNs per row: {average_nans}")
+print(f"Average number of non-NaN values per row: {average_non_nans}")
+print(f"Row with most NaNs: {max_nans_row_index} (NaNs: {max_nans_count})")
+print(f"Row with most non-NaNs: {max_non_nans_row_index} (Non-NaNs: {max_non_nans_count})")
+
+this should exclude values where i == j
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To exclude values where the index of the row (i) is equal to the index of the column (j), you need to avoid counting the diagonal elements in the matrix. This is because a square matrix typically has an index i == j for the diagonal elements. You can implement this by modifying the logic to skip the diagonal elements when counting NaN and non-NaN values.
+
+Here is the updated version of your code, which excludes diagonal elements:
+
+python
+Kopieren
+Bearbeiten
+import numpy as np
+
+arr = np.loadtxt("../data_topology_2/data_lille_cleaned.csv")
+
+nan_counts = []
+non_nan_counts = []
+max_nans_row_index = -1
+max_non_nans_row_index = -1
+max_nans_count = -1
+max_non_nans_count = -1
+
+# Iterate through the rows and columns
+for i, row in enumerate(arr):
+    nan_count = 0
+    non_nan_count = 0
+    
+    for j, value in enumerate(row):
+        if i != j:  # Skip diagonal elements (where i == j)
+            if np.isnan(value):
+                nan_count += 1
+            else:
+                non_nan_count += 1
+
+    nan_counts.append(nan_count)
+    non_nan_counts.append(non_nan_count)
+
+    if nan_count > max_nans_count:
+        max_nans_count = nan_count
+        max_nans_row_index = i
+
+    if non_nan_count > max_non_nans_count:
+        max_non_nans_count = non_nan_count
+        max_non_nans_row_index = i
+
+# Calculate the average number of NaN and non-NaN values
+average_nans = np.mean(nan_counts)
+average_non_nans = np.mean(non_nan_counts)
+
+print(f"Average number of NaNs per row (excluding diagonal): {average_nans}")
+print(f"Average number of non-NaN values per row (excluding diagonal): {average_non_nans}")
+print(f"Row with most NaNs (excluding diagonal): {max_nans_row_index} (NaNs: {max_nans_count})")
+print(f"Row with most non-NaNs (excluding diagonal): {max_non_nans_row_index} (Non-NaNs: {max_non_nans_count})")
+
+Key Changes:
+Inner Loop: I added an inner loop (for j, value in enumerate(row)) to iterate through each element of the row.
+Condition if i != j: This skips the diagonal elements (where i == j), ensuring they are not counted when calculating NaN and non-NaN values.
+Updated Outputs: The outputs now reflect the average and maximum counts excluding the diagonal elements.
+
+This code will calculate the average number of NaN and non-NaN values for each row, excluding the diagonal elements, and also report the row with the most NaNs and non-NaNs (excluding the diagonal values).
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+added_power_arr
+
+min value > 0 of this matrix
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To find the minimum value greater than 0 in a matrix (i.e., the smallest non-zero value), you can apply the following steps:
+
+Flatten the matrix to make it easier to work with.
+Mask out the zero values, so that only non-zero values are considered.
+Find the minimum value greater than 0.
+
+Here’s how you can implement this:
+
+python
+Kopieren
+Bearbeiten
+import numpy as np
+
+# Assuming added_power_arr is your matrix
+added_power_arr = np.loadtxt("../data_topology_2/added_power_arr.csv")  # Modify with actual data if necessary
+
+# Flatten the array and mask out zeros
+non_zero_values = added_power_arr[added_power_arr > 0]
+
+# Find the minimum value greater than 0
+if non_zero_values.size > 0:
+    min_value = np.min(non_zero_values)
+    print(f"Minimum value greater than 0: {min_value}")
+else:
+    print("No values greater than 0 found in the matrix.")
+
+Explanation:
+added_power_arr[added_power_arr > 0]: This masks out the zeros and selects only the values greater than 0 from the matrix.
+np.min(non_zero_values): This computes the minimum value from the array of non-zero values.
+
+This code will print the smallest value greater than 0 in your matrix, or indicate that no such values exist if the matrix contains only zeros or negative values.
+
+4o mini

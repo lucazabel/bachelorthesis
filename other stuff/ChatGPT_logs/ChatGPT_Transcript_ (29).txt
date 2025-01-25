@@ -1,0 +1,43 @@
+Du:
+x = np.linspace(0, window_size, frames_arr.shape[1])
+
+    plt.title("First 4 successive frames for (normalized between -1 and 1)")
+    plt.xlabel("Time in Seconds")
+
+    for i in range(4):
+        plt.subplot(4, 1, i + 1)  # 4 rows, 1 column
+        plt.plot(x, frames_arr[i, :])
+
+i dont want it to show the axis from the original plot
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+If you want to hide the axes for the individual subplots in your code, you can use plt.axis('off') or plt.gca().axis('off') within the loop to remove the axis from each subplot. Here's how you can modify your code:
+
+python
+Kopieren
+Bearbeiten
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.linspace(0, window_size, frames_arr.shape[1])
+
+plt.title("First 4 successive frames for (normalized between -1 and 1)")
+plt.xlabel("Time in Seconds")
+
+for i in range(4):
+    plt.subplot(4, 1, i + 1)  # 4 rows, 1 column
+    plt.plot(x, frames_arr[i, :])
+    plt.axis('off')  # Hide the axis for each subplot
+
+plt.tight_layout()  # Adjust layout to avoid overlap
+plt.show()
+
+Explanation:
+plt.axis('off') will remove both the axis ticks and labels from the plot.
+plt.tight_layout() helps to ensure that the subplots don’t overlap and are properly spaced.
+
+This should give you the desired effect where the axis is hidden for each of the four subplots.
+
+4o mini

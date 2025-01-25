@@ -1,0 +1,95 @@
+Du:
+\includesvg[width=0.7\columnwidth]{./img/topology/side_view.svg}
+ & 
+\includesvg[width=0.3\columnwidth]{./img/topology/top_down.svg} 
+
+how can i put this two images in latex next to each other 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To place the two SVG images side by side in LaTeX, you can use the minipage environment or the subfigure environment from the subcaption package. Here’s how you can do it using both methods:
+
+Using minipage:
+latex
+Kopieren
+Bearbeiten
+\documentclass{article}
+\usepackage{svg}
+
+\begin{document}
+
+\begin{minipage}[b]{0.7\textwidth}
+    \centering
+    \includesvg[width=\textwidth]{./img/topology/side_view.svg}
+\end{minipage}
+\begin{minipage}[b]{0.3\textwidth}
+    \centering
+    \includesvg[width=\textwidth]{./img/topology/top_down.svg}
+\end{minipage}
+
+\end{document}
+
+Using subfigure (with subcaption package):
+latex
+Kopieren
+Bearbeiten
+\documentclass{article}
+\usepackage{svg}
+\usepackage{subcaption}
+
+\begin{document}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[b]{0.7\textwidth}
+        \centering
+        \includesvg[width=\textwidth]{./img/topology/side_view.svg}
+        \caption{Side View}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \includesvg[width=\textwidth]{./img/topology/top_down.svg}
+        \caption{Top Down View}
+    \end{subfigure}
+    \caption{Topology Views}
+\end{figure}
+
+\end{document}
+
+Explanation:
+minipage method: This method creates two independent boxes next to each other. The [b] option aligns the two boxes at the bottom.
+subfigure method: This method uses the subcaption package to create subfigures, which are part of a larger figure. This approach also allows you to add captions to each image and a main caption for the entire figure.
+
+Adjust the widths as necessary to fit your layout and ensure proper alignment and spacing.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+whats the [b] for
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+The [b] in the minipage and subfigure environments in LaTeX specifies the vertical alignment of the contents. Here's a breakdown of the possible alignment options:
+
+[t]: Aligns the top of the content in the minipage or subfigure with the top of the content in the adjacent environment.
+[c]: Centers the content vertically with respect to the adjacent environment.
+[b]: Aligns the bottom of the content in the minipage or subfigure with the bottom of the content in the adjacent environment.
+Example:
+If you use [b], both images will align at the bottom:
+latex
+Kopieren
+Bearbeiten
+\begin{minipage}[b]{0.7\textwidth}
+    % Content here
+\end{minipage}
+\begin{minipage}[b]{0.3\textwidth}
+    % Content here
+\end{minipage}
+
+This ensures that the bottom edges of both minipage blocks are aligned.
+
+Choosing the right alignment option depends on how you want the images or content to be aligned relative to each other, particularly when they have different heights.
+
+4o

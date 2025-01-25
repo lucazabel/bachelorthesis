@@ -1,0 +1,2430 @@
+Du:
+After gathering the data in the form of log-files, from the FIT/IoT-Lab, I had to parse the log-files and store the antenna sending power data in a $N \times N$ Matrix.\\
+
+ \[
+     \begin{blockarray}{cccccc}
+       node\_id & 0 & 1 & 2 & 3 & 4 \\
+       \begin{block}{c[ccccc]}
+         0 & nan & -17 & -5 & 3 & nan\\
+         1 & -17 & nan & -10 & -12 & 1.3\\
+         2 & -3 & -12 & nan & 2.3 & 3\\
+         3 & nan & nan & -17 & nan & -12\\
+         4 & 3 & -1 & -7 & -12 & nan\\
+       \end{block}
+     \end{blockarray}
+ \]
+
+the matrix should stay the same but the sentence above should be written on a thesis level. it can also be longer
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here is a revised version of your sentence with a more formal and academic tone:
+
+After collecting the dataset in the form of log files from the FIT/IoT-Lab, the next step involved parsing these files to extract relevant information regarding the antenna transmission power. The extracted data was then systematically organized into a structured format, specifically a 
+𝑁
+×
+𝑁
+N×N matrix. This matrix represents the transmission power levels between different nodes in the network, where each element 
+(
+𝑖
+,
+𝑗
+)
+(i,j) denotes the power level sent from node 
+𝑖
+i to node 
+𝑗
+j. The resulting matrix is presented below:
+
+\begin{blockarray}{cccccc} \text{node\_id} & 0 & 1 & 2 & 3 & 4 \\ \begin{block}{c[ccccc]} 0 & \text{nan} & -17 & -5 & 3 & \text{nan} \\ 1 & -17 & \text{nan} & -10 & -12 & 1.3 \\ 2 & -3 & -12 & \text{nan} & 2.3 & 3 \\ 3 & \text{nan} & \text{nan} & -17 & \text{nan} & -12 \\ 4 & 3 & -1 & -7 & -12 & \text{nan} \\ \end{block} \end{blockarray}
+
+In this matrix, "nan" denotes instances where the transmission power data was either not recorded or not applicable. This comprehensive representation facilitates a clear analysis of the transmission dynamics between the various nodes in the network.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+The log-files ahad following structure:
+
+timestanp; receiver; sender; length of packet; RSSI; transmission power; data
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a more formal and detailed description suitable for a thesis:
+
+The log files utilized for this study adhered to a specific structure, which ensured the systematic capture of critical transmission parameters. Each entry within the log files was composed of the following fields:
+
+Timestamp: This field recorded the precise time at which the data was captured, allowing for temporal analysis of the transmission events.
+Receiver: The identifier of the node that received the transmission, which is crucial for mapping the network topology and understanding the reception patterns.
+Sender: The identifier of the node that transmitted the packet, providing insights into the source of the transmission within the network.
+Length of Packet: This field indicated the size of the transmitted packet, which is relevant for analyzing the network's data throughput and efficiency.
+RSSI (Received Signal Strength Indicator): The signal strength as perceived by the receiving node, which serves as an essential metric for assessing the quality and reliability of the communication link.
+Transmission Power: The power level at which the sender transmitted the packet, a critical parameter for understanding the energy efficiency and range of the transmissions.
+Data: This field contained the payload of the packet, representing the actual information transmitted between nodes.
+
+This structured format enabled a detailed examination of the transmission characteristics and facilitated the subsequent parsing and organization of the data into an 
+𝑁
+×
+𝑁
+N×N matrix for analysis.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+this should be included in the text above the matrix but without the bullet points. the only important inmformation from those log files are: sender (i), receiver (j), and transmission power ((i,j)). the rest can be labeled as not important  
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+After collecting the dataset in the form of log files from the FIT/IoT-Lab, the next step involved parsing these files to extract relevant information regarding the antenna transmission power. The log files adhered to a structured format, comprising several fields: timestamp, receiver, sender, length of packet, RSSI, transmission power, and data. However, for the purposes of this analysis, the most pertinent information extracted from the logs included the sender (denoted as 
+𝑖
+i), the receiver (denoted as 
+𝑗
+j), and the transmission power (
+𝑖
+,
+𝑗
+i,j). The remaining fields, such as timestamp, length of packet, RSSI, and data, were deemed less critical for the construction of the transmission power matrix.
+
+The extracted data was then systematically organized into a structured format, specifically a 
+𝑁
+×
+𝑁
+N×N matrix. This matrix represents the transmission power levels between different nodes in the network, where each element 
+(
+𝑖
+,
+𝑗
+)
+(i,j) denotes the power level sent from node 
+𝑖
+i to node 
+𝑗
+j. The resulting matrix is presented below:
+
+\begin{blockarray}{cccccc} \text{node\_id} & 0 & 1 & 2 & 3 & 4 \\ \begin{block}{c[ccccc]} 0 & \text{nan} & -17 & -5 & 3 & \text{nan} \\ 1 & -17 & \text{nan} & -10 & -12 & 1.3 \\ 2 & -3 & -12 & \text{nan} & 2.3 & 3 \\ 3 & \text{nan} & \text{nan} & -17 & \text{nan} & -12 \\ 4 & 3 & -1 & -7 & -12 & \text{nan} \\ \end{block} \end{blockarray}
+
+In this matrix, "nan" denotes instances where the transmission power data was either not recorded or not applicable. This comprehensive representation facilitates a clear analysis of the transmission dynamics between the various nodes in the network.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+This matrix represents the transmission power of the antenna between nodes in the network, where each element $(i,j)$ is the transmission power of the antenna to reach node $j$ from $i$.\\
+This results in a matrix like the one below.\\
+This matrix has three different cases:
+\begin{itemize}
+    \item sender = receiver $(i = j)$ \\
+    When the sender and the receiver are the same node, no data has to be send and therefore $nan$ is written at $(i,j)$ in the matrix.\\ 
+    As its done in the example matrix at $(0,0), (1,1), ..., (4,4)$
+    \item sender reaches receiver with transmission power $x$\\
+    When the sender ($i)$ is able to reach the receiver ($j$) with transmission power $x$, $x$ is noted at $(i,j)$.\\
+    As it is done in ($0,1$) = $-17$, ($0,2$) = -5, ...
+    \item sender can not reach the receiver with any transmission power\\
+    When the sender ($i$) is not able to reach the receiver ($j$) with any transmission power $nan$ is written at ($i,j$) in the matrix.  
+\end{itemize}
+
+ \[
+     \begin{blockarray}{cccccc}
+       node\_id & 0 & 1 & 2 & 3 & 4 \\
+       \begin{block}{c[ccccc]}
+         0 & nan & -17 & -5 & 3 & nan\\
+         1 & -17 & nan & -10 & -12 & 1.3\\
+         2 & -3 & -12 & nan & 2.3 & 3\\
+         3 & nan & nan & -17 & nan & -12\\
+         4 & 3 & -1 & -7 & -12 & nan\\
+       \end{block}
+     \end{blockarray}
+ \]
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here is a refined and formal version of the explanation with an academic tone:
+
+This matrix represents the transmission power of the antenna between nodes in the network, where each element 
+(
+𝑖
+,
+𝑗
+)
+(i,j) corresponds to the transmission power required for the antenna to reach node 
+𝑗
+j from node 
+𝑖
+i. The matrix, therefore, provides a comprehensive view of the transmission dynamics between the nodes. The resulting structure is depicted in the matrix below:
+
+\begin{blockarray}{cccccc} \text{node\_id} & 0 & 1 & 2 & 3 & 4 \\ \begin{block}{c[ccccc]} 0 & \text{nan} & -17 & -5 & 3 & \text{nan} \\ 1 & -17 & \text{nan} & -10 & -12 & 1.3 \\ 2 & -3 & -12 & \text{nan} & 2.3 & 3 \\ 3 & \text{nan} & \text{nan} & -17 & \text{nan} & -12 \\ 4 & 3 & -1 & -7 & -12 & \text{nan} \\ \end{block} \end{blockarray}
+
+This matrix encapsulates three distinct cases:
+
+Sender Equals Receiver (
+𝑖
+=
+𝑗
+i=j):
+When the sender and the receiver are the same node, no transmission is required, and consequently, "nan" is recorded at 
+(
+𝑖
+,
+𝑗
+)
+(i,j) in the matrix. This is observed in the example matrix at positions 
+(
+0
+,
+0
+)
+(0,0), 
+(
+1
+,
+1
+)
+(1,1), ..., 
+(
+4
+,
+4
+)
+(4,4), indicating no transmission occurs when the sender and receiver are identical.
+
+Sender Reaches Receiver with Transmission Power 
+𝑥
+x:
+If the sender (
+𝑖
+i) successfully reaches the receiver (
+𝑗
+j) with a specific transmission power 
+𝑥
+x, the value 
+𝑥
+x is documented at position 
+(
+𝑖
+,
+𝑗
+)
+(i,j) in the matrix. For example, in the matrix, 
+(
+0
+,
+1
+)
+(0,1) is noted as 
+−
+17
+−17, 
+(
+0
+,
+2
+)
+(0,2) as 
+−
+5
+−5, and so forth, indicating the respective transmission power levels between those nodes.
+
+Sender Cannot Reach Receiver:
+In scenarios where the sender (
+𝑖
+i) is unable to reach the receiver (
+𝑗
+j) with any transmission power, "nan" is recorded at 
+(
+𝑖
+,
+𝑗
+)
+(i,j) in the matrix. This denotes an absence of a viable transmission link between those nodes, exemplified in the matrix at positions such as 
+(
+0
+,
+4
+)
+(0,4) and 
+(
+3
+,
+0
+)
+(3,0).
+
+This structured representation aids in visualizing and analyzing the network's transmission power requirements and capabilities between nodes.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+how acn i give the matrix a title
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To give the matrix a title in a LaTeX document, you can use the \caption command if the matrix is part of a table or figure, or you can manually add a title using the \textbf{} or \centerline{} commands. Here are a couple of methods:
+
+1. Using \caption with a Table Environment:
+
+If you want the matrix to be part of a table and have a numbered caption, use the table environment.
+
+latex
+Kopieren
+Bearbeiten
+\begin{table}[h]
+    \centering
+    \caption{Transmission Power Matrix Between Nodes}
+    \[
+        \begin{blockarray}{cccccc}
+          \text{node\_id} & 0 & 1 & 2 & 3 & 4 \\
+          \begin{block}{c[ccccc]}
+            0 & \text{nan} & -17 & -5 & 3 & \text{nan} \\
+            1 & -17 & \text{nan} & -10 & -12 & 1.3 \\
+            2 & -3 & -12 & \text{nan} & 2.3 & 3 \\
+            3 & \text{nan} & \text{nan} & -17 & \text{nan} & -12 \\
+            4 & 3 & -1 & -7 & -12 & \text{nan} \\
+          \end{block}
+        \end{blockarray}
+    \]
+\end{table}
+
+2. Using \textbf{} for a Simple Title:
+
+If you prefer a simpler, non-numbered title above the matrix, you can manually add it using \textbf{} or \centerline{}.
+
+latex
+Kopieren
+Bearbeiten
+\centerline{\textbf{Transmission Power Matrix Between Nodes}}
+\[
+    \begin{blockarray}{cccccc}
+      \text{node\_id} & 0 & 1 & 2 & 3 & 4 \\
+      \begin{block}{c[ccccc]}
+        0 & \text{nan} & -17 & -5 & 3 & \text{nan} \\
+        1 & -17 & \text{nan} & -10 & -12 & 1.3 \\
+        2 & -3 & -12 & \text{nan} & 2.3 & 3 \\
+        3 & \text{nan} & \text{nan} & -17 & \text{nan} & -12 \\
+        4 & 3 & -1 & -7 & -12 & \text{nan} \\
+      \end{block}
+    \end{blockarray}
+\]
+
+
+Both methods will provide a clear title for your matrix, enhancing the readability and presentation of your document.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+the caption should be below the matrix
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To place the caption below the matrix, you can use the table environment along with the \caption command, placing the caption after the matrix definition. Here’s how you can do it:
+
+latex
+Kopieren
+Bearbeiten
+\begin{table}[h]
+    \centering
+    \[
+        \begin{blockarray}{cccccc}
+          \text{node\_id} & 0 & 1 & 2 & 3 & 4 \\
+          \begin{block}{c[ccccc]}
+            0 & \text{nan} & -17 & -5 & 3 & \text{nan} \\
+            1 & -17 & \text{nan} & -10 & -12 & 1.3 \\
+            2 & -3 & -12 & \text{nan} & 2.3 & 3 \\
+            3 & \text{nan} & \text{nan} & -17 & \text{nan} & -12 \\
+            4 & 3 & -1 & -7 & -12 & \text{nan} \\
+          \end{block}
+        \end{blockarray}
+    \]
+    \caption{Transmission Power Matrix Between Nodes}
+\end{table}
+
+
+In this setup:
+
+The \caption command is placed directly after the matrix, ensuring that the caption appears below it.
+The table environment helps in managing the placement and provides a formatted caption below the matrix.
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Next I extracted the coordinates of the nodes from the the FIT/IoT-Lab and calculated the distance between each node. In this example I used 2D coordinates, whereas in the real topology the coordinates had three dimensions.\\
+This distance matrix is required for calculating the gateway nodes, which are used so that for example node\_0 is still able reach node\_4. The gateways nodes are calculated by minimizing the distance from the receiver of the signal to the gateway node, while maximizing the distance from the gateway node to the sender. The algorithm also minimizes the number of hops, so it priories a node further away which has a direct connection to the sender, over a node which is closer to the sender, but has a hop.\\
+I decided that the gateway algorithm should work this way, as even at the maximum transmission power of the antenna the consumption is only equal to receiving a packet and when comparing the consumption of the transmission power levels, and even though there is this exponential growth of consumption, the lowest power level is $\sim88mW$ and the highest is $\sim104mW$. Therefore the direct path is always better then over another node.\\
+\begin{table}[h]
+    \centering
+    \[
+        \begin{blockarray}{cccccc}
+          \text{node\_id} & 0 & 1 & 2 & 3 & 4 \\
+          \begin{block}{c[ccccc]}
+            0 & 0 & 2 & 4 & 6 & 5 \\
+            1 & 2 & 0 & 3 & 5 & 1 \\
+            2 & 4 & 3 & 0 & 7 & 3 \\
+            3 & 6 & 5 & 7 & 0 & 6 \\
+            4 & 5 & 1 & 3 & 6 & 0 \\
+          \end{block}
+        \end{blockarray}
+    \]
+    \caption{Example of a distance matrix between all the nodes in the topology}
+    \label{table:matrix_dist}
+\end{table}
+
+So in the case of our example, the algorithm iterates of the matrix and when it find a $"nan"$ where $i\neq j$. Then it looks for the closest node from the receiver. The closest node to node\_4 ist node\_1 with a distance 1m. Then it checks if node\_1 has a connection to node\_4, so it checks for a non-$nan$ value at $(1,4)$ in the transmission power matrix. But $(1,4) = nan$ so it looks for the next closest node which in our case is node\_2 with a distance of 3m. Now it checks for a non-$nan$ value at $(2,4)$, which returns $3$ so we know that there is a connection from node\_2 to node\_4 with power $3$.\\
+Next it checks for a connection from node\_0 the sender to node\_2 the gateway. If $(0,2)$ is not $"nan"$, then it returns the path $0 \longrightarrow 2 \longrightarrow 4$. This means two transmissions are required from node\_0 to node\_2 with power $(0,2) = -5$ and from node\_2 to node\_4 with power $(2,4) = 3$.\\
+Doing this algorithm results in following matrix.
+\begin{table}[h]
+    \centering
+    \[
+        \begin{blockarray}{cccccc}
+          \text{node\_id} & 0 & 1 & 2 & 3 & 4 \\
+          \begin{block}{c[ccccc]}
+            0 & \text{nan} & -17 & -5 & 3 & (-5, 3) \\
+            1 & -17 & \text{nan} & -10 & -12 & (-10,3) \\
+            2 & -3 & -12 & \text{nan} & 2.3 & 3 \\
+            3 & (-17, -10) & -2 & -17 & \text{nan} & -12 \\
+            4 & 3 & -1 & -7 & -12 & \text{nan} \\
+          \end{block}
+        \end{blockarray}
+    \]
+    \caption{Example of a transmission power matrix between all the nodes in the topology with gateways for not direct reachable nodes}
+    \label{table:matrix_gateway}
+\end{table}
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here is a refined and formal version of your text with an academic tone:
+
+Next, I extracted the coordinates of the nodes from the FIT/IoT-Lab and calculated the distances between each pair of nodes. In this example, two-dimensional (2D) coordinates were used for simplicity, although the actual network topology utilized three-dimensional (3D) coordinates. The resulting distance matrix is essential for identifying gateway nodes, which facilitate communication between nodes that are not directly reachable. For instance, a gateway node enables node_0 to communicate with node_4 even when a direct transmission is not possible.
+
+The gateway nodes are determined by minimizing the distance from the receiver of the signal to the gateway node, while simultaneously maximizing the distance from the gateway node to the sender. Additionally, the algorithm minimizes the number of hops, prioritizing nodes that are further away but have a direct connection to the sender over those that are closer but require intermediate hops.
+
+The rationale for this approach is based on the energy consumption characteristics of the transmission power levels. Even at the maximum transmission power, the energy consumption is only marginally higher than receiving a packet. Specifically, the lowest transmission power level consumes approximately 88 mW, while the highest level consumes around 104 mW. Given this relatively small difference, a direct transmission is generally more energy-efficient than one involving intermediate nodes.
+
+The following table illustrates an example of the distance matrix between all nodes in the network topology:
+
+\begin{table}[h] \centering \begin{blockarray}{cccccc} \text{node\_id} & 0 & 1 & 2 & 3 & 4 \\ \begin{block}{c[ccccc]} 0 & 0 & 2 & 4 & 6 & 5 \\ 1 & 2 & 0 & 3 & 5 & 1 \\ 2 & 4 & 3 & 0 & 7 & 3 \\ 3 & 6 & 5 & 7 & 0 & 6 \\ 4 & 5 & 1 & 3 & 6 & 0 \\ \end{block} \end{blockarray} \caption{Example of a distance matrix between all nodes in the topology} \label{table:matrix_dist} \end{table}
+
+In the example provided, the algorithm iterates over the transmission power matrix. When it encounters a "nan" value at 
+(
+𝑖
+,
+𝑗
+)
+(i,j) where 
+𝑖
+≠
+𝑗
+i
+
+=j, it searches for the closest node to the receiver. For instance, to establish a connection from node_0 to node_4, the algorithm identifies node_1 as the closest node to node_4 with a distance of 1m. It then checks if node_1 has a connection to node_4 by examining the value at 
+(
+1
+,
+4
+)
+(1,4) in the transmission power matrix. Since 
+(
+1
+,
+4
+)
+=
+nan
+(1,4)=nan, the algorithm proceeds to the next closest node, which is node_2, at a distance of 3m. Finding a valid connection at 
+(
+2
+,
+4
+)
+=
+3
+(2,4)=3, the algorithm confirms a transmission path from node_2 to node_4 with power 3.
+
+Next, the algorithm checks the connection from the sender node_0 to the gateway node_2. If 
+(
+0
+,
+2
+)
+(0,2) is not "nan", the algorithm establishes the path 
+0
+→
+2
+→
+4
+0→2→4, requiring two transmissions: from node_0 to node_2 with power 
+(
+0
+,
+2
+)
+=
+−
+5
+(0,2)=−5, and from node_2 to node_4 with power 
+(
+2
+,
+4
+)
+=
+3
+(2,4)=3.
+
+The resulting matrix, incorporating these gateway paths, is presented below:
+
+\begin{table}[h] \centering \begin{blockarray}{cccccc} \text{node\_id} & 0 & 1 & 2 & 3 & 4 \\ \begin{block}{c[ccccc]} 0 & \text{nan} & -17 & -5 & 3 & (-5, 3) \\ 1 & -17 & \text{nan} & -10 & -12 & (-10, 3) \\ 2 & -3 & -12 & \text{nan} & 2.3 & 3 \\ 3 & (-17, -10) & -2 & -17 & \text{nan} & -12 \\ 4 & 3 & -1 & -7 & -12 & \text{nan} \\ \end{block} \end{blockarray} \caption{Example of a transmission power matrix between all nodes in the topology with gateways for nodes that are not directly reachable} \label{table:matrix_gateway} \end{table}
+
+This matrix provides a detailed representation of the transmission paths, including the use of gateway nodes to facilitate communication between nodes that are not directly connected.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Next, I extracted the coordinates of the nodes from the FIT/IoT-Lab and calculated the distances between each pair of nodes. In this example, two-dimensional coordinates were used for simplicity, although the actual network topology utilized three-dimensional coordinates. \\
+I calculated the Euclidean-Distance between each pair of nodes: $$dist(i,j) = \sqrt{(i_x-j_x)^2+(i_y-j_y)^2}$$
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s an enhanced version of your text with the inclusion of the Euclidean distance formula:
+
+Next, I extracted the coordinates of the nodes from the FIT/IoT-Lab and calculated the distances between each pair of nodes. In this example, two-dimensional (2D) coordinates were used for simplicity, whereas the actual network topology employed three-dimensional (3D) coordinates. To determine the distances, I calculated the Euclidean distance between each pair of nodes using the following formula:
+
+dist
+(
+𝑖
+,
+𝑗
+)
+=
+(
+𝑖
+𝑥
+−
+𝑗
+𝑥
+)
+2
++
+(
+𝑖
+𝑦
+−
+𝑗
+𝑦
+)
+2
+dist(i,j)=
+(i
+x
+	​
+
+−j
+x
+	​
+
+)
+2
++(i
+y
+	​
+
+−j
+y
+	​
+
+)
+2
+	​
+
+
+Where:
+
+𝑖
+𝑥
+i
+x
+	​
+
+ and 
+𝑖
+𝑦
+i
+y
+	​
+
+ are the coordinates of node 
+𝑖
+i,
+𝑗
+𝑥
+j
+x
+	​
+
+ and 
+𝑗
+𝑦
+j
+y
+	​
+
+ are the coordinates of node 
+𝑗
+j.
+
+This calculation yields the straight-line distance between any two nodes in the 2D plane, providing the necessary input for constructing the distance matrix. This matrix serves as a critical component for identifying gateway nodes and optimizing communication paths within the network.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+The receiver algorithm~\eqref{alg:receiver} starts by setting the receiver sensitivity to $-101 dBm$. It then calls a prebuilt function, \text{mac\_csma\_data\_received}, which runs in the background and triggers whenever a packet is received. After receiving a packet, the firmware logs the information in following format:
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a refined version of your text with an academic tone:
+
+The receiver algorithm, described in Equation~\eqref{alg:receiver}, initiates by setting the receiver sensitivity to 
+−
+101
+ 
+dBm
+−101dBm. Subsequently, it invokes a prebuilt function, \texttt{mac_csma_data_received}, which operates in the background and is triggered upon the reception of a packet. Once a packet is received, the firmware logs the relevant information in the following format:
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+\subsection{Sender\label{subsec:sender}}
+I developed an algorithm for the sender, which I refer to as the sender firmware~\ref{alg:sender}.
+This sender firmware first of all enters a phase locked loop (PLL), to synchronize the internal oscillator to a reference signal to stabilize the frequency. This ensures that the radio transmitter operates at the correct frequency, to avoid errors in communication.\\
+Once synchronized, the radio chip transitions to the idle state, as the transmission power can only be changed in this or the sleep state. The algorithm then changes the transmission power. Then it proceeds to call the $broadcast\_data()$ function~\ref{alg:broadcast}. 
+and proceeds to broadcast 30 packages~\ref{alg:broadcast}, enters the idle state again, switches to the next transmission power before repeating this process until all transmission powers are covered.\\
+
+i specifically dont like the opening sentence
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here's a refined version with a revised opening sentence:
+
+\subsection{Sender\label{subsec:sender}}
+
+To manage data transmission, I developed a sender algorithm, referred to as the sender firmware~\ref{alg:sender}. This firmware begins by entering a phase-locked loop (PLL) to synchronize the internal oscillator with a reference signal, thereby stabilizing the frequency and ensuring accurate communication.
+
+Once synchronization is achieved, the radio chip transitions to the idle state, which is necessary for adjusting the transmission power. The algorithm then modifies the transmission power accordingly and calls the \texttt{broadcast_data()} function~\ref{alg:broadcast}. The sender broadcasts 30 packets, re-enters the idle state, switches to the next transmission power level, and repeats this cycle until all transmission power levels have been utilized.
+
+This version provides a more engaging opening sentence and smooth transitions between the steps of the algorithm.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+As I have already mentioned in 2.2.1, the M3-board is able to measure its consump-
+tion over the span of the experiment and logs the data in an oml-file. Therefore
+I had to configure a monitoring profile, which logs power consumption data every
+560μs. Specifically it takes an average of four measurements of 140μs which results
+in an entry every 560μs
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a refined version of your text with an academic tone:
+
+As previously discussed in Section 2.2.1, the M3-board is equipped with the capability to measure its power consumption throughout the duration of the experiment, logging this data into an OML file. To facilitate this, I configured a monitoring profile that records power consumption data at intervals of every 560 μs. Specifically, this profile averages four measurements, each taken over 140 μs, resulting in a consolidated data entry every 560 μs. This configuration ensures precise and continuous monitoring of the board's power usage during the experiment.
+
+This version improves clarity and provides a more formal presentation of the information.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+This configuration is above the minimum $500\mu s$ threshold of the board and reduces the number of outliers as already an average is taken.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a refined version of your sentence:
+
+This configuration exceeds the board's minimum threshold of 500 μs and helps reduce the number of outliers by incorporating an average over multiple measurements.
+
+This version is concise and maintains a formal tone, while clearly conveying the relationship between the configuration and its benefits.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Now we know that the each node is reachable and have to calculate the actual power consumption in Watt.\\
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a refined version of your sentence:
+
+With the assurance that each node is reachable, the next step is to calculate the actual power consumption in watts.
+
+This version is clear and maintains a formal tone, making the transition to the calculation phase smooth and logical.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+With the help of the expirement\_duration I was able to identify the idle consumption of the node. This helps me to filter the power column of the oml-files for values above the idle consumption. With the experiment\_duration I am then also able to group the values, for each transmitting power level, as there is a 5 second timeout between each power level. After gathering the data this results in this distribution:
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a refined version of your text:
+
+Using the \texttt{experiment_duration}, I identified the idle power consumption of each node. This allowed me to filter the power column in the OML files for values exceeding the idle consumption. Additionally, the \texttt{experiment_duration} enabled me to group the power consumption values according to each transmission power level, as there is a 5-second timeout between power level transitions. After processing the data, the resulting distribution is as follows:
+
+This version improves clarity and structure, ensuring the explanation flows logically.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+The same could also be done with the receiving power.\\
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a refined version of your sentence:
+
+A similar approach was applied to the receiving power, allowing for the identification and grouping of values above the idle consumption threshold.
+
+This version aligns with the formal tone and provides a clear, concise explanation.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+After getting the respective consumption for each power level, I can easily calculate the total power consumption for the transmission from each to each node. Therefore I just have to transform the transmission power level to their respective power consumption in milliwatt, we gather in section~\ref{subsec:power_lvl_to_power_mW}. If there is a gateway node we just have to add the power consumption of the power levels and the receiver power consumption for each transmission.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a refined version of your text:
+
+After obtaining the respective power consumption for each transmission power level, I can calculate the total power consumption for transmissions between each pair of nodes. This involves converting the transmission power levels to their corresponding power consumption in milliwatts, as outlined in Section~\ref{subsec:power_lvl_to_power_mW}. If a gateway node is involved, the total power consumption is determined by summing the power consumption of the transmission power levels and the receiver power consumption for each transmission step.
+
+This version improves clarity and readability, while maintaining a formal and precise tone.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+After obtaining the respective power consumption for each transmission power level, I can calculate the total power consumption for transmissions between each pair of nodes. This involves converting the transmission power levels to their corresponding power consumption in milliwatts, as outlined in Section~\ref{subsec:power_lvl_to_power_mW}. If a gateway node is involved, the total power consumption is determined by summing the power consumption of the transmission power levels and the receiver power consumption for each transmission step.
+This results in a matrix like this:
+\begin{table}[h]
+    \centering
+    \[
+        \begin{blockarray}{cccccc}
+          \text{node\_id} & 0 & 1 & 2 & 3 & 4 \\
+          \begin{block}{c[ccccc]}
+            0 & \text{nan} & 88.7 & 95.1 & 104.8 & 199.9 \\
+            1 & 88.7 & \text{nan} & 91.6 & 90.2 & 196.4 \\
+            2 & 97.3 & 90.2 & \text{nan} & 103.2 & 104.8 \\
+            3 & 180.3 & 97.3 & 88.7 & \text{nan} & 90.2 \\
+            4 & 104.8 & 97.3 & 93.3 & 90.2 & \text{nan} \\
+          \end{block}
+        \end{blockarray}
+    \]
+    \caption{Example of a power consumption matrix in mW between all the nodes of the topology}
+    \label{table:matrix_added}
+\end{table}\\
+
+\subsection{Vivaldi Coordinates\label{subsec:vivaldi_coords}}
+This power consumption matrix can now be used for Vivaldi~\ref{subsec:vivaldi_works}, so that it can predict coordinates 2-dimensional coordinates.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a refined version of your text with improved flow and clarity:
+
+After obtaining the respective power consumption for each transmission power level, I can calculate the total power consumption for transmissions between each pair of nodes. This calculation involves converting the transmission power levels to their corresponding power consumption in milliwatts, as described in Section~\ref{subsec:power_lvl_to_power_mW}. When a gateway node is involved, the total power consumption is computed by summing the power consumption of the transmission power levels and the receiver power consumption for each transmission step. The resulting matrix is illustrated below:
+
+\begin{table}[h] \centering \begin{blockarray}{cccccc} \text{node\_id} & 0 & 1 & 2 & 3 & 4 \\ \begin{block}{c[ccccc]} 0 & \text{nan} & 88.7 & 95.1 & 104.8 & 199.9 \\ 1 & 88.7 & \text{nan} & 91.6 & 90.2 & 196.4 \\ 2 & 97.3 & 90.2 & \text{nan} & 103.2 & 104.8 \\ 3 & 180.3 & 97.3 & 88.7 & \text{nan} & 90.2 \\ 4 & 104.8 & 97.3 & 93.3 & 90.2 & \text{nan} \\ \end{block} \end{blockarray} \caption{Example of a power consumption matrix in mW between all the nodes of the topology} \label{table:matrix_added} \end{table}
+
+\subsection{Vivaldi Coordinates\label{subsec:vivaldi_coords}}
+
+This power consumption matrix can now be utilized by Vivaldi~\ref{subsec:vivaldi_works} to predict two-dimensional coordinates. By analyzing the power consumption data, Vivaldi can infer the spatial relationships between nodes, allowing for the estimation of their relative positions within the network topology.
+
+This version ensures coherence and maintains a formal academic tone.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+As already mentioned in~\ref{subsec:vivaldi_works}, it has multiple options. For this experiment I decided to use hight vectors as the prediction with them is better. I also limited the dimension to two, as this is required for NEMO. 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a refined version of your text:
+
+As previously mentioned in Section~\ref{subsec:vivaldi_works}, Vivaldi offers multiple configuration options. For this experiment, I opted to use height vectors, as they provide more accurate predictions. Additionally, I limited the dimensionality to two, as this is a requirement for NEMO.
+
+This version enhances clarity and maintains a formal tone.
+
+1/2
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+To apply the Vivaldi algorithm on my data I utilized a Simulator for Decentralized Network Coordinate Algorithms (NCSim).
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a refined version of your sentence:
+
+To apply the Vivaldi algorithm to my data, I utilized the Simulator for Decentralized Network Coordinate Algorithms (NCSim).
+
+This version is concise and maintains a formal tone.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+After receiving the predicted 2-dimensional coordinates from Vivaldi I applied the NEMO+ algorithm on it. Therefore I used the notebooks from NEMO which contained an implementation of NEMO+ on GitHub in the "revision" branch.\\
+I had to tweak the two hyperparemeter NEMO+ uses, which was done by analyzing heat-maps the notebooks supplied. So after setting the merge-factor and the step-size accordingly I just had to run the rest of the notebook to receive the results.
+
+you can also extend a bit
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a refined and extended version of your text:
+
+After obtaining the predicted two-dimensional coordinates from Vivaldi, I applied the NEMO+ algorithm to further refine the network coordinate predictions. For this purpose, I utilized Jupyter notebooks from the NEMO project, which contained an implementation of NEMO+ available on the "revision" branch of their GitHub repository.
+
+To optimize the performance of NEMO+, I adjusted its two key hyperparameters: the merge factor and the step size. This tuning process was guided by analyzing heat maps provided by the notebooks, which visually represented the impact of different parameter settings on the algorithm’s accuracy. By carefully interpreting these heat maps, I was able to fine-tune the parameters to achieve optimal results.
+
+Once the merge factor and step size were set appropriately, I executed the remaining sections of the notebook to process the data and generate the final output. This step yielded refined coordinate predictions that could be utilized for further analysis or application within the network topology.
+
+This version adds more context about the tuning process and the use of heat maps, providing a clearer picture of the methodology and its purpose.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+This power consumption matrix can now be utilized by Vivaldi~\ref{subsec:vivaldi_works}, to predict 2-dimensional coordinates. By analyzing the power consumption data Vivaldi can infer the distance between nodes, allowing for the estimation of their relative positions within the network topology.\\
+As previously mentioned in Section~\ref{subsec:vivaldi_works}, Vivaldi offers multiple configuration options. For this experiment, I opted to use height vectors, as they provide more accurate predictions. Additionally, I limited the number of dimensions to two, as this is a requirement for NEMO.\\
+To apply the Vivaldi algorithm on my data, I utilized a Simulator for Decentralized Network Coordinate Algorithms (NCSim).
+
+same here
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a refined and extended version of your text:
+
+This power consumption matrix can now be utilized by Vivaldi~\ref{subsec:vivaldi_works} to predict two-dimensional coordinates. By analyzing the power consumption data, Vivaldi can infer the distances between nodes, thereby estimating their relative positions within the network topology.
+
+As previously mentioned in Section~\ref{subsec:vivaldi_works}, Vivaldi offers several configuration options to tailor the algorithm's performance to specific use cases. For this experiment, I chose to incorporate height vectors, as they enhance the accuracy of the coordinate predictions. Furthermore, I restricted the dimensionality to two, aligning with the requirements of NEMO, which operates within a two-dimensional space.
+
+To apply the Vivaldi algorithm to my dataset, I employed the Simulator for Decentralized Network Coordinate Algorithms (NCSim). This simulation tool enabled the effective implementation of Vivaldi, facilitating the processing and prediction of node coordinates based on the provided power consumption matrix.
+
+This revision enhances clarity and provides additional context for the methodology and rationale behind the choices made in the experiment.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+\subsection{Topology Setup\label{subsec:topology_setup}}
+As mentioned in section~\ref{sec:fitiot} FIT/IoT-Lab offers eight different sites. Even though Grenoble is the has the most M3-boards, which are required for the experiment because of their ability to transmit data wireless, I opted to use the Lille Site as it had much less traffic and the nodes where also spread widely in the whole building.\\
+Specifically I utilized 83 nodes deployed all over the topology.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{./img/lille_nodes.png}
+\caption{The Lille topology with highlighted deployment areas in blue and the selected nodes in red.}
+\end{figure}
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+\subsection{Topology Setup\label{subsec:topology_setup}}
+As mentioned in section~\ref{sec:fitiot} FIT/IoT-Lab offers eight different sites. Even though Grenoble is the has the most M3-boards, which are required for the experiment because of their ability to transmit data wireless, I opted to use the Lille Site as it had much less traffic and the nodes where also spread widely in the whole building.\\
+Specifically I utilized 83 nodes deployed all over the topology.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{./img/lille_nodes.png}
+\caption{The Lille topology with highlighted deployment areas in blue and the selected nodes in red.}
+\end{figure}
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a refined version of your text:
+
+\subsection{Topology Setup\label{subsec:topology_setup}}
+
+As mentioned in Section~\ref{sec:fitiot}, FIT/IoT-Lab provides access to eight different sites. While the Grenoble site has the largest number of M3 boards, which are essential for this experiment due to their wireless data transmission capabilities, I chose to use the Lille site. This decision was driven by the lower traffic at Lille and the broader distribution of nodes throughout the building, which provided a more suitable environment for the experiment.
+
+In this setup, I utilized a total of 83 nodes, strategically deployed across the topology to ensure comprehensive coverage and optimal data collection.
+
+\begin{figure}[h] \centering \includegraphics[width=0.8\textwidth]{./img/lille_nodes.png} \caption{The Lille topology with highlighted deployment areas in blue and the selected nodes in red.} \end{figure}
+
+This version improves the flow and clarity of your explanation while maintaining a formal tone.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+The Lille topology from two different perspectives to visualize the distance of the nodes in meters. Theres also a colorbar to visualize the floor of each node.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a refined version of your sentence:
+
+The Lille topology is shown from two different perspectives to better visualize the distances between nodes in meters. Additionally, a color bar is included to indicate the floor on which each node is located.
+
+This version is more concise while maintaining clarity and detail.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Each node in the topology is a IoT-LAB M3 board and has been designed specifically for the IoT-LAB testbeds. It takes its name from the CPU which is the Cortex M3 manufactured by ARM. The Cortex M3 is a 32-bit CPU with a maximum speed of 72MHz.\\
+The CPU is integrated into the STM32 microcontroller unit (MCU) manufactured by STMicroelectronics. The MCU has 64KB of RAM.\\
+The board also has the AT86RF231 radio chip~\ref{subsubsec:radiochip}. It communicates over the 2.4GHz ISM frequency band and has a maximum range of 40 to 50 meters. It has a maximum bandwith of only 256Kbits/s which still is enough for our purposes.\\
+A 128-Mbits external NOR flash memory (N25Q128A13E1240F) is connected to the MCU via the SPI bus in order to enable rapid data transfer. 
+The power is supplied via a USB port. The board is also equipped with a variety of sensors, but I use non of them. 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s an enhanced version of your text:
+
+Each node in the topology is an IoT-LAB M3 board, specifically designed for use in IoT-LAB testbeds. The board derives its name from its CPU, the Cortex M3, which is manufactured by ARM. The Cortex M3 is a 32-bit processor capable of operating at speeds up to 72 MHz.
+
+The CPU is embedded within the STM32 microcontroller unit (MCU) produced by STMicroelectronics, which features 64 KB of RAM. This robust combination ensures efficient processing capabilities suitable for various IoT applications.
+
+Additionally, the board is equipped with the AT86RF231 radio chip~\ref{subsubsec:radiochip}, which operates in the 2.4 GHz ISM frequency band. The radio chip supports a maximum range of 40 to 50 meters and offers a bandwidth of up to 256 Kbps, which is sufficient for the data transmission needs of this experiment.
+
+For storage and rapid data transfer, the board includes a 128-Mbit external NOR flash memory (N25Q128A13E1240F) connected to the MCU via the SPI bus. The power is supplied through a USB port, making the board easy to deploy and manage in various environments.
+
+While the board is also equipped with a variety of sensors, none of them were utilized in this particular experiment.
+
+This version adds clarity and flow while maintaining a formal and detailed tone.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+The USB also allows me to flash my own firmware on the specific node to (here u should continue)
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+The USB also allows me to flash my own firmware onto the specific node to customize its functionality and tailor it to the specific requirements of the experiment. This capability is crucial for implementing custom protocols, modifying the behavior of the node, and collecting specific data metrics necessary for the study. By flashing custom firmware, I can directly control aspects such as transmission power, data handling, and logging processes, ensuring that the node operates precisely as needed for the experimental setup.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+where should I incorporate it in the hardware text
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+You can incorporate the information about the USB functionality in the section discussing the hardware features of the M3 board. Here's how you might revise the section to include this detail:
+
+Each node in the topology is an IoT-LAB M3 board, specifically designed for use in IoT-LAB testbeds. The board derives its name from its CPU, the Cortex M3, which is manufactured by ARM. The Cortex M3 is a 32-bit processor capable of operating at speeds up to 72 MHz.
+
+The CPU is embedded within the STM32 microcontroller unit (MCU) produced by STMicroelectronics, which features 64 KB of RAM. This robust combination ensures efficient processing capabilities suitable for various IoT applications.
+
+Additionally, the board is equipped with the AT86RF231 radio chip~\ref{subsubsec:radiochip}, which operates in the 2.4 GHz ISM frequency band. The radio chip supports a maximum range of 40 to 50 meters and offers a bandwidth of up to 256 Kbps, which is sufficient for the data transmission needs of this experiment.
+
+For storage and rapid data transfer, the board includes a 128-Mbit external NOR flash memory (N25Q128A13E1240F) connected to the MCU via the SPI bus.
+
+The USB port not only powers the board but also facilitates the flashing of custom firmware onto the nodes. This capability allows for the customization of node functionality to meet specific experimental requirements, such as modifying transmission power, adjusting data handling protocols, and enabling tailored logging processes.
+
+While the board is also equipped with a variety of sensors, none of them were utilized in this particular experiment.
+
+This integration places the USB feature within the context of the board’s overall hardware capabilities, emphasizing its role in customization and experimental flexibility.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+The firmware for both the sender and receiver nodes was developed using C, leveraging OpenLab, a FreeRTOS-based development environment originally provided by HiKoB. The version of OpenLab used in this project was further developed by IoT-LAB, incorporating numerous enhancements and optimizations.\\
+The OpenLap branch used in this project has been actively developed by FIT/IoT-Lab, with a significant number of contributions improving the frameworks functionality and user friendlyness. Specifically, this branch is 428 commits ahead of the original HiKoB/openlap branch. This reflects the extensive modifications and updates made by IoT-Lab to enhance the platform for their specific IoT experimentation needs.\\
+They added numerous libraries which for example allowed me to easily change the transmission power and the state of the node.\\
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+The firmware for both the sender and receiver nodes was developed using C, leveraging OpenLab, a FreeRTOS-based development environment originally provided by HiKoB. The version of OpenLab employed in this project was an advanced iteration developed by IoT-LAB, incorporating numerous enhancements and optimizations tailored for IoT experimentation.
+
+The OpenLab branch utilized in this project has undergone extensive development by FIT/IoT-Lab, showcasing significant improvements in both functionality and user-friendliness. Notably, this branch is 428 commits ahead of the original HiKoB/openlap branch, reflecting the substantial modifications and updates made to meet the specific needs of IoT-Lab’s research and testing frameworks.
+
+Among the key enhancements are the addition of numerous libraries, which simplified crucial tasks such as adjusting the transmission power and managing the state of the nodes. These improvements made the development process more efficient and allowed for greater flexibility in configuring the firmware to suit the experimental requirements.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+There is a total of $3486$ distance measurements in this topology and this histogram has $500$ bins, so there is an average of \textasciitilde 7 nodes to 1 bar in the histogram. The minimum distance between a pair of nodes is $1.127m$ and the maximum is $60.827m$. \\
+The majority of nodes has a range of $1m$ to $30m$ to each other, whereas the the distance with the most node pairs is $2.475m$.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+In this topology, there are a total of 3,486 distance measurements. The histogram illustrating these distances is divided into 500 bins, resulting in an average of approximately seven node pairs per bin. The distances between nodes range from a minimum of 1.127 meters to a maximum of 60.827 meters.
+
+The majority of node pairs have distances ranging from 1 meter to 30 meters, with the most frequent distance between node pairs being 2.475 meters. This indicates that while the network covers a broad spatial area, a significant portion of nodes are relatively close to one another, facilitating efficient communication within this range.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+This is due to the nature of construction of the building and the deployment of the nodes, as they are grouped in areas of the building. This also explains why certain distances such as \textasciitilde5 meters, \textasciitilde22 meters and \textasciitilde48 meters and very uncommon compared to its distance neighboors.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+This distribution is influenced by the building's construction and the strategic deployment of the nodes, which are grouped in specific areas within the structure. This clustering results in certain distances, such as approximately 5 meters, 22 meters, and 48 meters, being less common compared to their neighboring distances. The irregularity in these specific distances reflects the architectural layout and the selective placement of nodes in the building, leading to distinct gaps in the distance measurements between certain node pairs.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+After collecting all the transmission power logs and parsing them, I received a transition power matrix with the transmission power level from each node to each node when they were reached and nan when they were not rachable.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+After collecting and parsing all the transmission power logs, I obtained a transmission power matrix that indicates the transmission power level required for each node to reach every other node. The matrix entries contain the specific power levels used when a connection was successful, and "nan" values where nodes were not reachable. This matrix provides a comprehensive overview of the connectivity and power requirements across the network.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Average number of NaNs per row: 35.23809523809524
+Average number of non-NaN values per row: 48.76190476190476
+Row with most NaNs: 14 (NaNs: 76)
+Row with most non-NaNs: 21 (Non-NaNs: 70)
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+The analysis of the transmission power matrix reveals several key insights:
+
+Average number of NaNs per row: Approximately 35.24, indicating that on average, about 35 nodes are not reachable from any given node.
+Average number of non-NaN values per row: Approximately 48.76, suggesting that most nodes can connect to roughly 49 other nodes within the network.
+Row with the most NaNs: Row 14, with 76 NaNs, highlights that this node has the fewest connections, indicating potential isolation or placement in a less accessible area of the topology.
+Row with the most non-NaNs: Row 21, with 70 non-NaN values, shows that this node has the most connections, suggesting it is well-positioned to reach a majority of other nodes efficiently.
+
+These findings provide insights into the network's connectivity, helping to identify nodes with potential communication issues and those that serve as central hubs.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+I analized the transmission power for following stats:
+\begin{enumerate}
+    \item \textbf{Average number of nodes reached}\\
+    on average each node reached 49 other nodes.
+    \item \textbf{Average number of nodes not reached}\\
+    On average each node did not reach 34 other nodes.
+    \item \textbf{Node with the most other nodes reached}\\
+    The node 39 \& 40 reached the least other nodes. They could not reach 75 of the 82 nodes (excluding itself). They each only reached 7 other nodes. 
+    \item \textbf{Node with the least other nodes reached}\\
+    The node 46 reached the most other nodes, with a total of 70 of the 82 nodes reached. 
+\end{enumerate}
+
+leverage this to thesis level english
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+I conducted an analysis of the transmission power data, which led to the following insights:
+
+Average number of nodes reached: On average, each node in the network was able to establish communication with 49 other nodes. This reflects the overall connectivity within the topology and provides an understanding of how effectively nodes can transmit data to their neighbors.
+
+Average number of nodes not reached: On average, each node was unable to reach 34 other nodes. This indicates the presence of gaps in the network's connectivity, which may be attributed to various factors such as distance, transmission power limitations, or physical obstructions within the building.
+
+Node with the most other nodes reached: Nodes 39 and 40 exhibited the least connectivity, as they were unable to reach 75 out of the 82 nodes in the topology (excluding themselves). These nodes could only establish communication with 7 other nodes, suggesting they might be located in areas with significant signal attenuation or interference, which hampers their ability to connect to a majority of the network.
+
+Node with the least other nodes reached: In contrast, node 46 demonstrated the highest connectivity, successfully reaching 70 out of the 82 nodes in the network. This node's ability to communicate with a majority of the nodes indicates it is situated in a favorable location within the topology, potentially with optimal line-of-sight to other nodes or fewer physical barriers hindering the signal.
+
+These findings highlight the variability in connectivity between nodes within the network, suggesting that certain nodes serve as more central hubs, while others may face significant challenges in establishing reliable communication links.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+In contrast, node 46 demonstrated the highest connectivity, successfully reaching 70 out of the 82 nodes in the network. This was possible because of its superior position in the building. It was located on floor 2 on the floor. This allowed it to reach nodes from the first second and third floor. 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+In contrast, node 46 demonstrated the highest connectivity, successfully reaching 70 out of the 82 nodes in the network. This exceptional connectivity was primarily due to its advantageous position within the building. Positioned on the second floor, node 46 had an optimal location that allowed it to effectively communicate with nodes situated on the first, second, and third floors. This strategic placement minimized physical obstructions and likely provided better line-of-sight, enhancing its ability to establish connections with a large number of neighboring nodes.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+After collecting and parsing all the transmission power logs, I obtained a transmission power matrix that indicates the transmission power level required for each node to reach every other node. The matrix entries contain the specific power levels used when a connection was successful, and "nan" values where nodes were not reachable. This matrix provides a comprehensive overview of the connectivity and power requirements across the network.\\
+I analized the transmission power for following stats:
+\begin{enumerate}
+    \item \textbf{Average number of nodes reached}\\
+    On average, each node in the network was able to establish communication with 49 other nodes. 
+    \item \textbf{Average number of nodes not reached}\\
+    On average, each node was unable to reach 34 other nodes. This indicates the presence of gaps in the network connectivity, which can be the cause of various factors such as distance, physical obstructions like walls and the presence of electrical devices from employees in the building.
+    \item \textbf{Node with the most other nodes reached}\\
+    Nodes 39 and 40 exhibited the least connectivity, as they were unable to reach 75 out of the 82 nodes in the topology (excluding themselves). These nodes could only establish communication with 7 other nodes, as they were located in the first floor and very far end of the building which greatly reduced their ability to connect with other nodes in the building.
+    \item \textbf{Node with the least other nodes reached}\\
+    In contrast, node 46 demonstrated the highest connectivity, successfully reaching 70 out of the 82 nodes in the network. This exceptional connectivity was primarily due to its advantageous position within the building. Positioned on the second floor, node 46 had an optimal location that allowed it to effectively communicate with nodes situated on the first, second, and third floors.\\
+    This placement minimized physical obstructions enhancing its ability to establish connections with a large number of neighboring nodes.
+\end{enumerate}
+
+
+write a finishing sentence or paragraph after the enumerate
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+This analysis highlights the variability in connectivity across the network, driven largely by factors such as node placement, building structure, and physical obstructions. The differences in reachability emphasize the challenges of designing reliable communication networks in complex environments. These insights are crucial for understanding the performance of IoT networks, as they can inform decisions on node placement, power levels, and the design of gateway mechanisms to optimize connectivity across the topology.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+\subsubsection{Energy Consumption in Milliwatt~\label{consumptio_eval}}
+While collecting the transmission power logs I also gathered OML-files which I analyzed to retrieve the energy consumption for each transmission power level, the receiving consumption and the idle consumption of a node.\\
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+\subsubsection{Energy Consumption in Milliwatt~\label{consumptio_eval}}
+
+In addition to collecting the transmission power logs, I also gathered OML (Observations Markup Language) files that provided valuable data for analyzing the energy consumption of each node. This data allowed me to calculate the energy consumption for each transmission power level, as well as the power consumption during the receiving and idle states of the nodes. By parsing the OML files, I was able to identify the specific energy usage under different operating conditions, which is critical for evaluating the efficiency of the network and understanding the trade-offs between energy consumption and communication performance. This analysis provides insights into the overall energy efficiency of the system, highlighting potential areas for optimization in real-world IoT applications.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+This is each transmission power level compared to its consumption in milliwatt:
+\begin{figure}[h]
+    \centerline{\includesvg[width=0.6\columnwidth]{./img/consumption/consumption_s.svg}}
+    \caption{Transmission power level compared to power consumption in mW}
+    \label{fig:consumption_s}
+\end{figure}\\
+This figure shows the exponential growth of power consumption in mW, which happens when we increase the transmission power level to reach more nodes.
+\begin{figure}[h]
+    \centerline{\includesvg[width=0.6\columnwidth]{./img/reached_nodes.svg}}
+    \caption{Number of reached nodes compared to power consumption in mW}
+    \label{fig:reached_nodes}
+\end{figure}\\
+This figure shows that with increasing the transmission power we reach linearly more nodes, whereas the power consumption in mW growths exponential as shown in figure~\ref{fig:consumption_s}.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+This figure compares the transmission power level to its corresponding power consumption in milliwatts (mW). As shown in Figure~\ref{fig:consumption_s}, there is an exponential growth in power consumption as the transmission power level increases, reflecting the increased energy requirements needed to establish longer-range communication.
+
+\begin{figure}[h] \centerline{\includesvg[width=0.6\columnwidth]{./img/consumption/consumption_s.svg}} \caption{Transmission power level compared to power consumption in mW} \label{fig:consumption_s} \end{figure}
+
+Additionally, Figure~\ref{fig:reached_nodes} illustrates the relationship between the number of nodes reached and the power consumption in milliwatts. The graph shows that as the transmission power level increases, the number of reachable nodes increases linearly. However, as seen in Figure~\ref{fig:consumption_s}, the power consumption grows exponentially as more nodes are reached. This highlights the trade-off between reaching more nodes and the significant increase in energy consumption, which must be carefully managed in energy-sensitive IoT networks.
+
+\begin{figure}[h] \centerline{\includesvg[width=0.6\columnwidth]{./img/reached_nodes.svg}} \caption{Number of reached nodes compared to power consumption in mW} \label{fig:reached_nodes} \end{figure}
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+ However, as seen in Figure~\ref{fig:consumption_s}, power consumption increases exponentially as more nodes are reached.\\
+This behaves as expected with the information from the Free-Space-Path-Loss~\ref{sec:pathloss} formula.
+
+the second sentence needs more depth
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+However, as seen in Figure~\ref{fig:consumption_s}, power consumption increases exponentially as more nodes are reached. This behavior aligns with the expectations derived from the Free-Space Path Loss (FSPL) formula~\ref{sec:pathloss}, which predicts that the required transmission power to maintain a reliable communication link grows significantly with distance. As the transmission range extends to reach additional nodes, the signal strength must be amplified to overcome both free-space path loss and other environmental factors such as obstacles, interference, and attenuation. Consequently, this results in a higher energy demand for longer communication ranges, which is reflected in the exponential increase in power consumption observed in the graph. This exponential growth underscores the challenges of maintaining efficient power usage in large-scale networks with diverse connectivity requirements.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+I calculated the gateway matrix as described in section~\ref{subsec:gateway_mat}.\\
+For adding the receiving power I had 3 approaches. The first approach was to ignore all receiving power so I added nothing but the transmission consumptions. The second approach was to add the receiving consumption only of the gateway node involved. And the third approach was to always add the receiving consumption. wether the connection was direct or via a gateway node. 
+
+make this in better english and continue explaining what you would choose
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+I calculated the gateway matrix as described in section~\ref{subsec:gateway_mat}. To incorporate the receiving power into the calculations, I considered three different approaches. The first approach involved disregarding the receiving power entirely, adding only the transmission power consumption. The second approach added the receiving power consumption only for the gateway node involved in the communication. Lastly, the third approach involved adding the receiving consumption for all nodes, regardless of whether the connection was direct or passed through a gateway node.
+
+Upon evaluating these approaches, I opted for the second approach, where the receiving power consumption was added only for the gateway node involved. This decision was made to more accurately reflect the energy consumed by the gateway node, which handles the reception of the transmission and often plays a crucial role in routing and forwarding data within the network. By limiting the receiving power consumption to the gateway node, I avoided overestimating the overall energy consumption while still accounting for the significant energy usage of the gateway nodes in the network. This approach strikes a balance between accuracy and computational efficiency, aligning well with the goals of my experiment.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Upon evaluating these approaches, I opted for the second approach, where the receiving power consumption was added only for the gateway node involved.\\
+This decision was made to more accurately reflect the actual consumption to reach a node rather than the consumption of all nodes involved in the transmission added up.
+
+continue here
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+This decision was made to more accurately reflect the actual consumption required to reach a node, rather than the total consumption of all nodes involved in the transmission being aggregated. By focusing on the gateway node's receiving power, I could isolate the energy consumption relevant to the communication process, ensuring that the results more closely align with the actual power usage incurred during the transmission. This approach minimizes overestimations that could arise from considering the receiving power of intermediate nodes that do not play a direct role in the energy consumption related to the end-to-end communication. Additionally, it maintains a more realistic representation of the energy expenditure in scenarios where nodes relay data through a gateway. This method proved to be both efficient and precise for the objectives of this experiment, providing a clearer understanding of the power consumption dynamics within the network.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+what are reason to take the third approach?
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Choosing the third approach, where the receiving power consumption is added for all nodes involved—whether the connection is direct or via a gateway—can be justified for several reasons:
+
+Comprehensive Energy Accounting: This approach provides a more holistic view of the total energy consumption within the network. It captures the full cost of maintaining communication paths, including both transmission and reception at each hop. This is particularly useful in scenarios where overall network energy efficiency is a priority.
+
+Modeling Multi-Hop Scenarios: In networks where multi-hop communication is common, accounting for the receiving power at all intermediate nodes can offer insights into the energy demands of relaying data. This can help in designing energy-efficient routing protocols by highlighting the cumulative energy costs of indirect communication paths.
+
+Network Load Analysis: By including the receiving consumption of all nodes, this method allows for a more accurate assessment of the load on each node. It can identify nodes that act as frequent intermediaries and might require optimization or load balancing to prevent excessive energy drain.
+
+Realistic Simulation of Network Operations: In real-world deployments, all nodes along a communication path consume energy, not just the endpoints. Including the receiving power of all nodes can make simulations and models more realistic, reflecting the true operational costs in dense or busy networks.
+
+Future-Proofing for Complex Applications: For applications that may evolve to require detailed energy monitoring or where power consumption data could influence dynamic network adjustments (e.g., adaptive routing based on node energy levels), the third approach ensures all relevant data is already being tracked.
+
+While this approach provides a more thorough accounting of energy use, it may also introduce complexity and require careful interpretation of results to avoid overestimating the energy cost for specific communication tasks.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+This decision was made to more accurately reflect the actual consumption required to reach a node including the receiving consumption of intermediate nodes and the receiving node and I want to reduce the total consumption. 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+This decision was made to more accurately reflect the actual energy consumption required to reach a node, including the receiving consumption of intermediate nodes and the destination node. By focusing on this approach, I aim to reduce the total energy consumption across the network, ensuring a more efficient use of resources while maintaining reliable communication paths.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+The third approach also achieved the best results in vivaldi but later more to taht. 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+The third approach also yielded the best results when applied in the Vivaldi algorithm, offering more accurate predictions of node coordinates by considering the full energy consumption for all transmissions. This comprehensive approach provided a clearer picture of the network dynamics and helped in optimizing the overall energy efficiency. Further details on this will be discussed in a subsequent section.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Figure~\ref{fig:consumption_r_s_i} compares the power consumption in mW of the idle, transmit and receive state. Obvious is that the even at maximum transmission power level the power consumption in mW is still lower as the receiver consumption.\\
+Other experiments on the IoT-LAB M3 boards have shown different results, with a maximum power consumption of around 200 mW at the maximum power level. But these results were collected using Contiki as the operating system of the node. Contiki seems way less energy efficient as even the idle consumption exceeds the 110 mW whereas the idle consumption using the same resources except the operating system being Openlap are around 65 mW.\\
+Therefore I will use Openlap as the general consumption is lower and I want to minimize the total power consumption. 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Figure~\ref{fig:consumption_r_s_i} illustrates a comparison of the power consumption in milliwatts for the idle, transmit, and receive states. Notably, even at the maximum transmission power level, the power consumption remains lower than that of the receive state.
+
+Previous experiments conducted on IoT-LAB M3 boards have reported different findings, indicating a maximum power consumption of approximately 200 mW at the highest transmission power level. However, these results were gathered using Contiki as the operating system. Contiki appears to be significantly less energy efficient, with idle consumption surpassing 110 mW. In contrast, the idle consumption on the same hardware using OpenLab is around 65 mW.
+
+Given these observations, I have chosen to use OpenLab due to its superior energy efficiency. By leveraging OpenLab, I aim to reduce the overall power consumption, which is critical for optimizing the energy efficiency of the network.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+As mentioned in section~\ref{subsubsec:gateway_eval} I also used Vivaldi to determine which of the three gateway methods I want to use.\\
+Figure~\ref{fig:vivaldi_gateways} shows the three different gateway setups.\\
+All the results are for Vivaldi with height vectors and two diemnsions.\\
+The 90th percentile error (NPRE) and the mean error (MRE) are relative high when only very few neighbors are involved and get lower with increasing number of neighbors. For each of the three gateway setups 15 neighbors seem quit optimal as the NPRE and MRE dont reduce by much further but both values are already quit low without adding much more neighbors.\\
+The second setup with receiving consumption added only for the gateway nodes is definitely the worst, with an NPRE abore 1.0 so more than 100\% off and an MRE of 0.25 so 25\%.\\
+The other two approaches result in roughly the same error values for NPRE and MRE. But with an NPRE of 0.5 and and MRE of 0.1 even those two approaches dont achieve great results. For the reasons stated in~\ref{subsubsec:gateway_eval} I choos the third option.\\
+Vivaldi also has an option to not use the height vector which typically results in predicted coordinates which are more clustered, but therefore also the results of the prediction are much worse. To not further worsen the prediction I decided against evaluations with it.\\
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+As outlined in Section~\ref{subsubsec:gateway_eval}, I utilized Vivaldi to evaluate the three gateway methods and determine the most suitable approach. Figure~\ref{fig:vivaldi_gateways} presents the outcomes for the different gateway setups. All results were derived using Vivaldi with height vectors in a two-dimensional space.
+
+The analysis reveals that both the 90th percentile relative error (NPRE) and the mean relative error (MRE) are significantly higher when only a few neighbors are considered, decreasing as the number of neighbors increases. For all three gateway configurations, involving around 15 neighbors appears to be optimal. Beyond this point, further increases in neighbors do not yield substantial reductions in NPRE and MRE, both of which are already reasonably low.
+
+Among the three gateway setups, the second approach—where the receiving consumption is added only for the gateway nodes—performed the worst. It exhibited an NPRE exceeding 1.0 (indicating errors over 100%) and an MRE of 0.25 (25% error).
+
+In contrast, the other two approaches delivered similar error values, with an NPRE around 0.5 and an MRE of 0.1. Despite these being relatively better, they still do not represent optimal accuracy. Based on the reasons discussed in Section~\ref{subsubsec:gateway_eval}, I selected the third option as the most balanced and effective approach.
+
+Vivaldi also offers the option to forgo height vectors, which generally results in more clustered predicted coordinates. However, this typically leads to less accurate predictions. To avoid further degradation in prediction accuracy, I chose not to evaluate configurations without height vectors.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Vivaldi also offers a classic option without high vectors, which generally results in more clustered predicted coordinates. However, figure~\ref{fig:vivaldi_classic} shows that this leads to less accurate predictions. The NPRE is around 1.3 and the MRE around 0.3, so its roughly 200\% worse compared to vivaldi with height vectors. To avoid further degradation in prediction accuracy, I chose not to evaluate configurations without height vectors.\\
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Vivaldi also provides a classic mode without height vectors, which typically yields more clustered predicted coordinates. However, as illustrated in Figure~\ref{fig:vivaldi_classic}, this approach results in significantly less accurate predictions. The NPRE is approximately 1.3, and the MRE is around 0.3, making it roughly 200% less accurate compared to Vivaldi with height vectors. Given this substantial drop in accuracy, I opted not to pursue further evaluations using configurations that exclude height vectors, prioritizing the precision of the predictions.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Another option Vivaldi offers is to increase the dimensions of the predicted coordinates. For NEMO 2-dimensional coordinates are required, but I want to show anyway how more dimensions increase the overall prediction accurace from Vivaldi.\\
+Therefore I took the average of the NPRE and MRE for a whole measurement sequence, so from 1 to 20 neighbors, for each dimension. 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Another option Vivaldi offers is to increase the dimensionality of the predicted coordinates. While NEMO requires 2-dimensional coordinates, I explored how increasing the number of dimensions can improve the overall prediction accuracy of Vivaldi.
+
+To illustrate this, I calculated the average NPRE and MRE across a complete measurement sequence—ranging from 1 to 20 neighbors—for each dimensional setup. By analyzing these averages, I was able to assess how higher-dimensional predictions impact the accuracy and whether the benefits justify the additional complexity, even though they exceed the requirements for NEMO.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+To illustrate this, I calculated the average NPRE and MRE across a complete measurement sequence, which ranged from 1 to 20 neighbors, for each dimension. The plot contains each third measurement for better visuability
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To illustrate this, I calculated the average NPRE and MRE across a complete measurement sequence, which ranged from 1 to 20 neighbors, for each dimension. For improved clarity, the plot displays every third measurement, allowing for better visualization of the trends and the impact of increasing dimensions on prediction accuracy. This approach helps to highlight how additional dimensions can enhance the precision of Vivaldi's coordinate predictions.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+make this better english and explain what disscirbed in the brackets. 
+MRE is mean error and NPRE is 90th percentile error
+
+Therefore I took 5 measurements for each dimension up to 50 dimensions and then I took the average MRE and NPRE for 8 to 20 neighbors for each dimension. I only used measurements with a minimum of 8 neighbors to reduce the overall variety, as with very few neighbors the error is significantly higher and varies more between predictions.\\
+\begin{figure}[h]
+    \centering
+    \includesvg[width=1\textwidth]{./img/vivaldi/npre_mre_scatter_regression.svg}
+    \caption{On the left the NPRE and on the right the MRE for each number of dimensions ranging from 2 to 50}
+    \label{fig:vivaldi_dimension}
+\end{figure}\\
+Figure~\ref{fig:vivaldi_dimension} shows that with an increasing number of dimensions the NPRE reduces, but after 15 dimensions it flattens out around 0.45 so 45\%.\\
+This behaves as I expected because (continue explanation here)\\
+But figure~\ref{fig:vivaldi_dimension} also shows that the MRE is the best with only 2 dimensional predicted coordinates around 0.105, thats an MRE of 10.5\%.\\
+After taht the MRE raises up to around 0.123 so roughly 12.3\% MRE. Then it reduces back down to an MRE of 11.2\% with 20 dimensions and where it then flattens out.\\
+That the predicted coordinates with only 2 dimensions show the lowest MRE could be due to (continue here and explain why 2 dimensions have a better MRE than more dimensions) 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Therefore, I conducted five measurements for each dimension up to 50 dimensions and calculated the average MRE (Mean Error) and NPRE (90th Percentile Error) for configurations with 8 to 20 neighbors. I specifically selected measurements with a minimum of 8 neighbors to reduce variability, as the error tends to be significantly higher and more variable when fewer neighbors are involved.
+
+\begin{figure}[h] \centering \includesvg[width=1\textwidth]{./img/vivaldi/npre_mre_scatter_regression.svg} \caption{On the left, the NPRE; on the right, the MRE for each number of dimensions ranging from 2 to 50} \label{fig:vivaldi_dimension} \end{figure}
+
+Figure~\ref{fig:vivaldi_dimension} illustrates that as the number of dimensions increases, the NPRE decreases, flattening around 0.45 (45%) after 15 dimensions. This behavior aligns with expectations because increasing the dimensionality allows for a more nuanced representation of node relationships, reducing the extreme errors captured by the NPRE. However, this diminishing return beyond 15 dimensions suggests that additional dimensions offer limited further improvement in capturing the 90th percentile of errors.
+
+Interestingly, the figure also shows that the MRE is lowest with only 2-dimensional predicted coordinates, around 0.105, representing an MRE of 10.5%. After this point, the MRE increases to approximately 0.123 (12.3%) before decreasing again, flattening out around 11.2% with 20 dimensions.
+
+The superior MRE performance with only 2 dimensions could be attributed to the simplicity and efficiency of representing network relationships in a lower-dimensional space. In two dimensions, the model may be capturing the most critical relationships without introducing the complexity and potential overfitting associated with higher dimensions. This simplicity could lead to more stable and accurate average error predictions. However, as dimensions increase, while more subtle spatial relationships are captured, the increased complexity may introduce noise, leading to slightly higher average errors before stabilizing at a higher dimensionality.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Figure~\ref{fig:vivaldi_compared} shows taht other network coordniate system (NCS) appraoches like Phoenix, DMFSGD and IDES also perform around the same level. (Now explain in 1 sentence for each, what those three aproaches are and how they differ from vivaldi)
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Figure~\ref{fig:vivaldi_compared} shows that other Network Coordinate System (NCS) approaches like Phoenix, DMFSGD, and IDES also perform at a similar level. Phoenix is a robust NCS that uses a hierarchical structure to reduce error accumulation, differing from Vivaldi's decentralized approach. DMFSGD (Distributed Matrix Factorization using Stochastic Gradient Descent) employs matrix factorization techniques to estimate coordinates, providing resilience against noisy data, unlike Vivaldi's spring-relaxation model. IDES (Internet Distance Estimation Service) relies on embedding Internet distances into a geometric space using landmark nodes, while Vivaldi dynamically adjusts coordinates based on real-time latency measurements without fixed landmarks.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+you can be a bit more detailed
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Figure~\ref{fig:vivaldi_compared} shows that other Network Coordinate System (NCS) approaches like Phoenix, DMFSGD, and IDES also perform at a similar level. Phoenix is an NCS approach that builds hierarchical clusters of nodes and uses them to reduce the impact of error propagation, leveraging a more structured approach compared to Vivaldi's purely decentralized model, which uses distance measurements and spring dynamics to adjust node coordinates. DMFSGD (Distributed Matrix Factorization using Stochastic Gradient Descent) approaches the problem by factorizing distance matrices using stochastic gradient descent to estimate the network's coordinate system, making it more robust to noise and missing data, unlike Vivaldi which primarily relies on the immediate distances between nodes and their direct measurements. IDES (Internet Distance Estimation Service) uses a set of predefined "landmark" nodes to estimate the distances between other nodes, embedding the network distances into a Euclidean space, whereas Vivaldi dynamically adjusts its coordinates by continuously refining them based on real-time latency measurements without the use of fixed landmarks, making it more adaptable to changes in the network topology.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+SECTION I.Introduction
+A number of latency-conscious Internet applications require an efficient, scalable and light-weight service to predict the distance (a.k.a. Round Trip Time or RTT) between any two Internet hosts without explicit measurements. Examples include network monitoring [36], application layer multicast [25], [51], locality-aware server selection [51], distributed query optimization [33], BitTorrent-based file sharing [38], network modeling [49], compact routing [1], multiplayer online games [2], etc. Clearly, for a network with N hosts, active probing for all pairwise link distances which requires O(N2) measurements is not a scalable solution. Such measurements would impose heavy load on all the hosts. Hence, the research community has developed various network coordinate (NC) systems [11] that predict the distances of all N2 end-to-end links, by performing only O(N) measurements. NC systems reduce the active probing overhead significantly, which is especially beneficial to large-scale distributed applications. Besides the aforementioned applications, recently the application venues of NC systems have been expanded to cloud services [44] and social graph analysis [7], [52].
+
+Every NC system relies on a basic model, which defines the relationship between the coordinates and the predicted distances. Most of the existing NC systems (such as GNP [31], Vivaldi [10], ICS [23], VL [41], NPS [30], PIC [8]), rely on the Euclidean distance model. These NC systems assign each host with a coordinate to represent its position in the Euclidean space, and predict distances between any two hosts by their coordinates. Unfortunately, such systems have a common drawback, i.e., the predicted distances among every three hosts have to satisfy triangle inequality, a condition that does not always hold in measured distances. Several existing studies [16], [19], [24], [42], [53] reported the wide existence of Triangle Inequality Violations (TIV) on the Internet. The wide existence of TIV leads to limited prediction accuracy of Euclidean distance model based NC systems. Consequently, the NC systems based on this model, let it be Vivaldi, PIC, NPS, or GNP, achieve similarly low prediction accuracy.
+
+To overcome the TIV problem, which cannot be handled well by using Euclidean distance model based NC systems, the definition of matrix factorization based NC system is introduced in [29]. The key idea of matrix factorization based systems is that a large distance matrix can be approximately factorized into two smaller matrices by methods such as Singular Value Decomposition (SVD) or Non-negative Matrix Factorization (NMF) [18]. Thanks to the linear dependence among the rows in Internet distance matrices [23], [29], [41], such methods achieve accurate approximations. Different from Euclidean distance based NC systems, the predicted distances obtained by matrix factorization based NC systems do not have to satisfy the triangle inequality. This offers an opportunity to overcome the accuracy barrier introduced by TIV. Prior to this work, IDES [29] is the first matrix factorization model based NC system. Recently, another matrix factorization model based NC system, so-called DMF [22], is proposed using a decentralized architecture. We discuss and evaluate these existing systems in detail in Section II-C and Section II-D. According to our study, these systems cannot achieve higher prediction accuracy than Euclidean distance model based NC systems. This result is because of the propagation of the prediction error. In both IDES and DMF, every host refers to a set of reference NCs for calculating its own NC. Concretely, all reference NCs have equal impact in the calculation. Once the inaccurate NCs are referred, their errors will be propagated to the hosts which refer to them, and could be propagated even further by misleading the NCs of these hosts. Handling this issue is the main goal of our work. The intuition behind our approach is as follows: the more accurate the reference NC is, the higher confidence (i.e., weight) should be assigned to this NC, and vice versa. Therefore, the impact of relatively inaccurate reference NCs is reduced by lower assigned weights. We will examine the effectiveness of our approach and present the detailed NC system design which can significantly improve the prediction accuracy over existing approaches.
+
+The key contributions of this paper are threefold.
+
+We introduce a weight-based mechanism for the calculation of the matrix factorization based NC. The weight concept is introduced here to distinguish the reference NCs with high errors and low errors. Base on this mechanism, a fully decentralized NC system using matrix factorization, so-called Phoenix, is proposed.
+
+We evaluate Phoenix extensively from two angles, i.e., overall prediction accuracy and practicality. By studying the cumulative distribution function (CDF) of relative errors, we show that Phoenix improves the prediction accuracy significantly over existing approaches. For practicality, we show that Phoenix can handle the drifts of the NCs well by utilizing regularization, while dealing with host churn using a low sampling rate. Moreover, it achieves fast convergence and robustness against measurement anomalies. We also evaluate Phoenix in a scalable network monitoring scenario, using a newly collected dynamic data set [27] which captured the RTT variations over time. According to our evaluation, Phoenix can reduce the monitoring cost by 83.92% while maintaining the 90th percentile relative error (NPRE) as 0.56. Phoenix reduces the average NPRE from Vivaldi by 35.63% and from IDES by 58.82% during the data collection period.
+
+We study how well an NC system can characterize the wide existence of TIV on the Internet by introducing two new quantitative metrics, so-called RERPL and AERPL. We find that RERPL and AERPL of Phoenix are lower than the other selected NC systems, which means that Phoenix can characterize the TIV property better than other existing approaches.
+
+The rest of this paper is organized as follows. In Section II, we review and evaluate the related work. Section III presents our design of Phoenix. We evaluate the performance of Phoenix and compare it with two existing approaches through extensive simulations in Section IV. In Section V, we perform analysis of TIV characterization in NC systems. We conclude the whole paper in Section VI.
+
+can you use that to disscribe phoenix
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Phoenix is a decentralized network coordinate (NC) system designed to improve the accuracy of distance predictions among hosts in a network by addressing the issue of Triangle Inequality Violations (TIV), which is common in traditional Euclidean distance-based NC systems like Vivaldi, PIC, and GNP. Unlike these systems, which rely on the assumption that distances between nodes satisfy the triangle inequality, Phoenix leverages a matrix factorization approach to model the network's distance matrix more accurately.
+
+A key feature of Phoenix is its weight-based mechanism, which differentiates between reference NCs with high and low prediction errors. This allows Phoenix to assign higher confidence (weights) to more accurate reference coordinates and lower confidence to less reliable ones, reducing the propagation of errors throughout the system. This weight-based approach helps prevent the issue of error accumulation that can degrade the performance of other matrix factorization-based NC systems like IDES and DMF, where all reference coordinates are treated equally, and errors from inaccurate references are propagated.
+
+Phoenix is designed to be fully decentralized, which means that it does not rely on a central authority for coordination or calculation. The system improves on the previous matrix factorization models by offering better prediction accuracy, especially in environments with high levels of measurement anomalies or host churn. It achieves fast convergence and robust performance even under these challenging conditions.
+
+In practical terms, Phoenix has been shown to significantly reduce the monitoring cost in large-scale distributed applications like network monitoring. For example, in a network monitoring scenario, Phoenix achieved an 83.92% reduction in monitoring cost while maintaining a low 90th percentile relative error (NPRE) of 0.56, outperforming both Vivaldi and IDES in terms of accuracy. Phoenix also addresses the issue of TIV more effectively than other systems, as evidenced by lower values of the two new metrics introduced: Relative Error in Predicted Latency (RERPL) and Average Error in Predicted Latency (AERPL).
+
+Overall, Phoenix's weight-based approach to matrix factorization and its ability to mitigate TIV lead to significant improvements in prediction accuracy, robustness, and efficiency compared to existing NC systems.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+I 1 long sentence like you did for DMFSGD and IDES
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Phoenix is a decentralized network coordinate (NC) system that improves prediction accuracy by using a weight-based matrix factorization approach, where more reliable reference coordinates are given higher weights to reduce the propagation of errors, thus overcoming the limitations of traditional Euclidean-based NC systems like Vivaldi, PIC, and GNP, as well as matrix factorization models like IDES and DMF, which suffer from error accumulation and inaccurate distance predictions due to the equal treatment of reference coordinates.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+why is DMFSGD more robust to missing data and noise. and what is meant with noise
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+DMFSGD (Decentralized Matrix Factorization with Stochastic Gradient Descent) is more robust to missing data and noise due to its decentralized, iterative approach to matrix factorization, which allows it to learn and update network coordinates (NCs) without relying heavily on complete or perfect data. The use of Stochastic Gradient Descent (SGD) enables the system to gradually converge to accurate coordinate predictions despite imperfections, by updating coordinates based on partial information and iteratively adjusting weights to minimize errors.
+
+In the context of DMFSGD, noise refers to any form of unpredictable or irregular data that may affect the measurements or predictions. This could be caused by fluctuations in the network, inaccurate measurements, temporary outages, or erroneous data that doesn't reflect the true network conditions. Noise can introduce errors and inconsistencies in the network's performance data (such as round-trip time or distance measurements), but DMFSGD is designed to handle these disturbances effectively by relying on gradual learning, where each update considers the overall pattern rather than reacting to single outliers or small deviations. This helps mitigate the impact of noise on the model’s accuracy.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Figure~\ref{fig:vivaldi_compared} shows that other Network Coordinate System (NCS) approaches like Phoenix~\cite{chen_phoenix_2011}, DMFSGD~\cite{liao_dmfsgd_2013}, and IDES~\cite{mao_ides_2006} also perform at a similar level. Phoenix is a weight-based matrix factorization approach, where reliable coordinates are given higher weights to reduce the propagation errors.\\
+DMFSGD approaches the problem by factorizing distance matrices using stochastik gradient descent to estimate the NCS. It does not rely on complete data and can cope with noisy irregular data.\\
+IDES uses a set of predefined landmark nodes to estimate the distance between nodes and is centrelized which ....
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Figure~\ref{fig:vivaldi_compared} shows that other Network Coordinate System (NCS) approaches like Phoenix~\cite{chen_phoenix_2011}, DMFSGD~\cite{liao_dmfsgd_2013}, and IDES~\cite{mao_ides_2006} also perform at a similar level. Phoenix is a weight-based matrix factorization approach, where reliable coordinates are assigned higher weights to reduce the propagation of errors, improving the accuracy of distance predictions.\ DMFSGD approaches the problem by factorizing distance matrices using stochastic gradient descent (SGD) to estimate the NCS. It does not rely on complete data, making it more robust in scenarios with missing or incomplete measurements, and it can cope with noisy, irregular data by iteratively refining the network coordinates.\ IDES (Iterative Distance Estimation System) uses a set of predefined landmark nodes to estimate the distances between nodes in the network. It is a centralized system, meaning it relies on a central coordinator to process the distance information and compute the network coordinates, which can introduce limitations in terms of scalability and fault tolerance.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Even though these four are vastly different appraoches they perform the same.\\
+A potential reason for the inaccurate predictions could lie in the triangle inequality error inherent in the dataset from which the Vivaldi coordinates are predicted.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Even though these four approaches are vastly different, they perform similarly in terms of prediction accuracy. A potential reason for the inaccurate predictions could lie in the triangle inequality violation (TIV) inherent in the dataset from which the Vivaldi coordinates are predicted. The triangle inequality, which states that the sum of the distances between any two pairs of nodes should be greater than or equal to the distance between the third node, is often violated in real-world network data. This results in inconsistencies that hinder the accuracy of distance predictions and limit the effectiveness of the Euclidean-based model used by Vivaldi and other similar NCS approaches.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Figure~\ref{fig:vivaldi_plain} shows the 2-dimensional coordinates Vivaldi predicted. Comparing this to figure~\ref{fig:topology_views}, which shows the actual topology setup, these are two vastly different results. 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Figure~\ref{fig:vivaldi_plain} presents the 2-dimensional coordinates predicted by Vivaldi, which, when compared to the actual topology setup depicted in Figure~\ref{fig:topology_views}, reveals a stark contrast. While the predicted coordinates aim to reflect the relative positions of nodes based on latency measurements, the resulting layout significantly diverges from the physical or logical arrangement of the network. This discrepancy underscores the challenges faced by the Vivaldi system in accurately capturing the underlying topology, possibly due to factors such as Triangle Inequality Violations (TIV) and environmental variations affecting latency measurements.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Figure~\ref{fig:vivaldi_plain} shows the 2-dimensional coordinates predicted by Vivaldi, which, when compared to the actual topology setup shown in figure~\ref{fig:topology_views}, even though the riginal setup is 3-dimensional, reveals a big contrast.\\
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Figure~\ref{fig:vivaldi_plain} shows the 2-dimensional coordinates predicted by Vivaldi, which, when compared to the actual topology setup shown in Figure~\ref{fig:topology_views}, reveals a significant contrast, even though the original setup is 3-dimensional. This discrepancy highlights the limitations of reducing a complex, three-dimensional network topology into a two-dimensional coordinate system, leading to potential inaccuracies in the representation of node relationships and distances.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+You may find similarities, such as the large cluster of nodes in figure~\ref{fig:vivaldi_plain} could resemble the cluster of nodes in the bottom right of figure~\ref{fig:topology_views}(b), but this is only speculation.\\
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+You may find similarities, such as the large cluster of nodes in Figure~\ref{fig:vivaldi_plain} potentially resembling the cluster of nodes in the bottom right of Figure~\ref{fig:topology_views}(b), but this remains speculative. Without precise alignment between the predicted coordinates and the actual topology, any resemblance might merely be coincidental rather than indicative of an accurate mapping.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+\subsection{Setting up NEMO+~\label{subsec:hyper_params}}
+The 2-dimensional coordinates from Vivaldi with the energy consumption between a pair of nodes being the Euclidean distance corresponds to our cost space for NEMO. NEMO is an iterative approach with three phases, 1) pre-processing 2) virtual operator placement and 3) re-assignment and replication. 
+\begin{figure}[h]
+    \centering
+    \includesvg[width=1\textwidth]{./img/nemo/nemo_phases.svg}
+    \caption{The initial phases of NEMO. On the left the initial grouping, in the middle the logical placement of the virtual node, and on the right the physical placement and Replication.}
+    \label{fig:nemo_phases}
+\end{figure}\\
+Figure~\ref{fig:nemo_phases}(left) shows the initial pre-processing phase of NEMO, where the nodes from the cost space are divided into distinct groups with minimal energy consumption. This leads to four groups highlighted in different colors. The network sink is also placed.
+Figure~\ref{fig:nemo_phases}(middle) depicts NEMOs second phase, where NEMO calculates the optimal placement of a virtual node for each cluster. Lastly NEMO determines the number and placement for each virtual node to distribute the load more evenly. These are the physical nodes. The nuber of physical nodes is determines by the load of a cluster. The orange cluster has three physical nodes which indicates a high load in this cluster. The green cluster has two physical nodes and the red and blue each only have one.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+\subsection{Setting up NEMO+~\label{subsec:hyper_params}}
+
+The 2-dimensional coordinates derived from Vivaldi, where the energy consumption between a pair of nodes corresponds to the Euclidean distance, form the cost space for NEMO. NEMO operates through an iterative approach encompassing three phases: 1) pre-processing, 2) virtual operator placement, and 3) re-assignment and replication.
+
+\begin{figure}[h] \centering \includesvg[width=1\textwidth]{./img/nemo/nemo_phases.svg} \caption{The initial phases of NEMO. On the left: initial grouping; in the middle: logical placement of the virtual node; on the right: physical placement and replication.} \label{fig:nemo_phases} \end{figure}
+
+Figure~\ref{fig:nemo_phases}(left) illustrates the initial pre-processing phase of NEMO, where nodes in the cost space are divided into distinct groups to minimize energy consumption. This process results in the formation of four groups, each highlighted in different colors. The network sink is also strategically placed during this phase.
+
+Figure~\ref{fig:nemo_phases}(middle) demonstrates the second phase, where NEMO computes the optimal placement of a virtual node for each cluster, ensuring efficient resource utilization. Lastly, in the re-assignment and replication phase, NEMO determines the number and placement of physical nodes based on the load of each cluster. The orange cluster, with a higher load, necessitates three physical nodes, while the green cluster requires two, and both the red and blue clusters only require one physical node each, reflecting their lower load.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Second Phase: Virtual Operator Placement. In the second
+phase, NEMO calculates the optimal placement of an operator in
+the cost space, referred to as a virtual node, between a given set of
+upstream nodes and the sink. Algorithm 1 shows the pseudocode
+of NEMO. It takes as input the source nodes grouped by their
+clusters, the sink node, and an optional parameter that controls
+the number of aggregation levels of the tree. When the required
+capacities of the current upstream nodes (which initially correspond
+to the sources) exceed the available capacities of the sink, NEMO
+enters an iterative process. In each iteration, NEMO creates a new
+partial window aggregation operator to extend the aggregation tree
+with an additional level. The goal of each iteration is to identify
+a set of physical nodes where the operator can be replicated. The
+physical nodes for each cluster are stored in a lookup table (line 5).
+Then, NEMO iterates over the clusters and determines the virtual
+node for each of them using an iterative optimization algorithm
+(line 7).
+rewrite it with these informations
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Second Phase: Virtual Operator Placement
+In the second phase, NEMO calculates the optimal placement of an operator within the cost space, referred to as a virtual node, positioned between a set of upstream nodes and the sink. Algorithm 1 outlines the pseudocode for NEMO, which takes as input the source nodes grouped by clusters, the sink node, and an optional parameter that dictates the number of aggregation levels in the tree. When the current upstream nodes' required capacities exceed the sink's available capacities, NEMO enters an iterative process.
+
+During each iteration, NEMO creates a new partial window aggregation operator to add another level to the aggregation tree. The objective of each iteration is to identify physical nodes suitable for operator replication. These physical nodes for each cluster are maintained in a lookup table (line 5). NEMO then iterates over the clusters, determining the optimal virtual node placement for each using an iterative optimization algorithm (line 7), ensuring that the placement minimizes overall energy consumption while balancing
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Figure~\ref{fig:nemo_phases}(middle) depicts NEMOs second phase, where NEMO calculates the optimal placement of a virtual node for each cluster. Lastly NEMO determines the number and placement for each virtual node to distribute the load more evenly. These are the physical nodes. The number of physical nodes is determined by the load of a cluster. The orange cluster has three physical nodes which indicates a high load in this cluster. The green cluster has two physical nodes and the red and blue each only have one.
+
+rewrite everything after "Figure~\ref{fig:nemo_phases}(middle)". Use following informations to explain:
+Second Phase: Virtual Operator Placement. In the second
+phase, NEMO calculates the optimal placement of an operator in
+the cost space, referred to as a virtual node, between a given set of
+upstream nodes and the sink. Algorithm 1 shows the pseudocode
+of NEMO. It takes as input the source nodes grouped by their
+clusters, the sink node, and an optional parameter that controls
+the number of aggregation levels of the tree. When the required
+capacities of the current upstream nodes (which initially correspond
+to the sources) exceed the available capacities of the sink, NEMO
+enters an iterative process. In each iteration, NEMO creates a new
+partial window aggregation operator to extend the aggregation tree
+with an additional level. The goal of each iteration is to identify
+a set of physical nodes where the operator can be replicated. The
+physical nodes for each cluster are stored in a lookup table (line 5).
+Then, NEMO iterates over the clusters and determines the virtual
+node for each of them using an iterative optimization algorithm
+(line 7).
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Figure~\ref{fig:nemo_phases}(middle) illustrates NEMO's second phase, where it calculates the optimal placement of a virtual node within the cost space for each cluster. This virtual node serves as an operator positioned between a set of upstream nodes and the sink. According to Algorithm 1, NEMO processes input that includes source nodes grouped by clusters, the sink node, and an optional parameter controlling the number of aggregation levels in the tree.
+
+When the capacities required by the upstream nodes surpass the sink's available capacity, NEMO initiates an iterative process. In each iteration, it creates a new partial window aggregation operator to expand the aggregation tree by an additional level. The objective of this process is to determine the most suitable physical nodes for operator replication. These physical nodes are identified and stored in a lookup table (line 5). NEMO then iterates over the clusters, using an iterative optimization algorithm (line 7) to determine the optimal placement of the virtual node for each cluster. This process ensures that the load is distributed efficiently across physical nodes, balancing the overall energy consumption. The number of physical nodes allocated to each cluster depends on the cluster's load, as demonstrated by the orange cluster having three physical nodes, indicating a higher load compared to the green cluster with two and the red and blue clusters with only one each.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+REWRITE THIS WHOLE SUBSECTION. also add restructure it, so add new subsubsections as u like. 
+
+\subsection{Setting up NEMO+~\label{subsec:nemo_setup}}
+The 2-dimensional coordinates from Vivaldi with the energy consumption between a pair of nodes being the Euclidean distance, corresponds to our cost space for NEMO+. NEMO+ operates through an iterative approach with three phases: 1) pre-processing, 2) virtual operator placement and 3) re-assignment and replication.
+\subsubsection{Capacities and weights\label{subsubsec:capacities}}
+In the NEMO notebooks the simulations are calculated on different capacity distributions. The individual nodes capacity will vary, but the sum of all capacities will stay the same. For my experiment I decided to use a mean capacity of 20, but the median will vary. A varying median will change NEMOs performance, but not by a significant difference, that is why I only display the results for median = 20.\\
+To assess the performance of NEMO under varying loads, NEMO assigns different link weights ($w$) to sources. The first configuration is $w = 1$ for all sources, the second is $w = 2$ and for the third each source is assigned a random weight following a log-normal distribution within the range $[1,50]$.
+\subsubsection{Tuning hyper-parameters\label{subsubsec:hyper_params}}
+Next I have to tune the step size $(ss)$ and the merge factor $(mf)$ to optimize the convergence of the aggregation trees. This was done by evaluating NEMO with a certain weight and capacity and then plotting the energy consumption results for each $ss$ and $mf$ into a heat-map.
+\begin{figure}[h]
+    \centering
+    \includesvg[width=1\textwidth]{./img/nemo/nemop_params_sl_capacity_100_w_weight_1.svg}
+    \caption{The NEMO results with $w=1$ visualized in a heat map to determine the merge factor and stepsize.}
+    \label{fig:nemo_hyper_params}
+\end{figure}\\
+Figure~\ref{fig:nemo_hyper_params} shows the energy consumption for the topology with a capacity of 20 and $w=1$. For this specific setup I can now tune NEMO+ by selecting the step size and merge factor with the lowest energy consumption. In this case I selected a merge factor of $0.5$ and a step size of $0.55$. These parameters could then be used to evaluate NEMO+ with it.  
+\begin{figure}[h]
+    \centering
+    \includesvg[width=1\textwidth]{./img/nemo/nemo_phases.svg}
+    \caption{The initial phases of NEMO. On the left the initial grouping, in the middle the logical placement of the virtual node, and on the right the physical placement and Replication.}
+    \label{fig:nemo_phases}
+\end{figure}\\
+Figure~\ref{fig:nemo_phases}(left) shows the initial pre-processing phase of NEMO, where the nodes from the cost space are divided into distinct groups with minimal energy consumption. This leads to four groups highlighted in different colors. The network sink is also placed in this phase.
+Figure~\ref{fig:nemo_phases}(middle) depicts NEMO's second phase, where it calculates the optimal placement of a virtual node within the cost space for each cluster. This virtual node serves as an operator positioned between a set of upstream nodes and the sink.\\
+When the capacities required by the upstream nodes surpass the sink's available capacity, NEMO initiates an iterative process. In each iteration, it creates a new partial window aggregation operator to expand the aggregation tree by an additional level. This is shown in figure~\ref{fig:nemo_placement}. Each iteration this identifies a set of physical nodes where the operator can be replicated. This process determines the most suitable physical nodes for operator replication. NEMO then iterates over the clusters, to determine the optimal placement of the virtual node for each cluster.\\
+The number of physical nodes allocated to each cluster depends on the cluster's load, as demonstrated by the orange cluster having three physical nodes, indicating a higher load compared to the green cluster with two and the red and blue clusters with only one each.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+latex
+Kopieren
+Bearbeiten
+\subsection{Setting up NEMO+~\label{subsec:nemo_setup}}
+NEMO+ utilizes the 2-dimensional coordinates predicted by Vivaldi, where the energy consumption between a pair of nodes corresponds to their Euclidean distance in the cost space. The iterative operation of NEMO+ involves three key phases: pre-processing, virtual operator placement, and re-assignment and replication. 
+
+\subsubsection{Capacities and Weights~\label{subsubsec:capacities}}
+In the NEMO+ simulations, different capacity distributions across nodes are tested, although the total capacity remains constant. For this experiment, the mean node capacity is set to 20, with variations in the median capacity to observe performance differences. However, the performance differences were found to be minimal, so only the results for a median capacity of 20 are presented.
+
+NEMO+ assesses its performance under various loads by assigning different link weights ($w$) to source nodes. Three configurations are used: 
+1. Uniform weight $w = 1$ for all sources.
+2. Uniform weight $w = 2$ for all sources.
+3. Random weights following a log-normal distribution within the range $[1,50]$ for each source.
+
+\subsubsection{Tuning Hyper-Parameters~\label{subsubsec:hyper_params}}
+To optimize NEMO+'s performance, hyper-parameters such as step size $(ss)$ and merge factor $(mf)$ are tuned for efficient convergence of the aggregation trees. This tuning involves evaluating NEMO+ under a specific weight and capacity setup, followed by plotting energy consumption results into a heat map.
+
+\begin{figure}[h]
+    \centering
+    \includesvg[width=1\textwidth]{./img/nemo/nemop_params_sl_capacity_100_w_weight_1.svg}
+    \caption{Energy consumption heat map for NEMO+ with $w=1$, used to determine the optimal merge factor and step size.}
+    \label{fig:nemo_hyper_params}
+\end{figure}
+
+Figure~\ref{fig:nemo_hyper_params} illustrates energy consumption for a setup with a capacity of 20 and $w=1$. Based on this heat map, the optimal parameters are selected, with a merge factor of $0.5$ and a step size of $0.55$, minimizing energy consumption. These parameters are then utilized to further evaluate NEMO+'s performance.
+
+\subsubsection{Phases of NEMO+~\label{subsubsec:nemo_phases}}
+\begin{figure}[h]
+    \centering
+    \includesvg[width=1\textwidth]{./img/nemo/nemo_phases.svg}
+    \caption{NEMO+ phases: initial grouping (left), virtual operator placement (middle), and physical placement and replication (right).}
+    \label{fig:nemo_phases}
+\end{figure}
+
+**Phase 1: Pre-processing**  
+Figure~\ref{fig:nemo_phases}(left) depicts the pre-processing phase, where nodes from the cost space are divided into groups to minimize energy consumption, resulting in four distinct groups highlighted in different colors. The network sink is placed during this phase as well.
+
+**Phase 2: Virtual Operator Placement**  
+In this phase (Figure~\ref{fig:nemo_phases}(middle)), NEMO+ calculates the optimal placement of a virtual node, acting as an operator between upstream nodes and the sink. When upstream node capacities exceed the sink's available capacity, NEMO+ iteratively creates partial window aggregation operators to extend the aggregation tree, identifying physical nodes for operator replication. These physical nodes are stored in a lookup table, with an iterative optimization algorithm determining the virtual node placement for each cluster.
+
+\subsubsection{Phase 3: Re-assignment and Replication~\label{subsubsec:re_assignment}}
+In the final phase (Figure~\ref{fig:nemo_phases}(right)), NEMO+ determines the number and placement of physical nodes to balance the load across clusters. The allocation of physical nodes depends on the cluster's load, as shown by the orange cluster with three physical nodes, indicating a higher load, compared to the green cluster with two and the red and blue clusters with one each. This strategic distribution ensures efficient energy consumption and load management within the network.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+what you wrote in phase 3 also belongs to phase 2. here is the information for phase 3
+
+Third Phase: Re-assignment and Replication. Finally, NEMO
+determines the number and placement of replicas for each newly
+created operator𝜔𝑖𝑘 in cluster 𝑘 and iteration 𝑖 to distribute the load
+more evenly (line 8). To that end, it iterates through a sorted list 𝑛𝑘
+of (𝜈𝑖
+, 𝐶𝑎) tuples (nodes and their available capacities), allocating
+capacities to each node until the total number of required capacities
+is exhausted. The result is a placement list indicating the nodes
+hosting the replicas and their allocated capacities. For example,
+𝐶𝑟 = 8, and 𝑛𝑘 = [(3, 2), (1, 4), (5, 6), (2, 10), (4, 3)], results in 𝑝𝑘 =
+[(3, 2), (1, 4), (5, 2)]. The replication factor for 𝜔𝑖𝑘 is thus 𝜌𝑖𝑘 = |𝑝𝑘
+|.
+The elements in 𝑛𝑘 are initially nodes in the group with available
+resources above a certain threshold 𝑡. If 𝑛𝑘 does not provide enough
+resources, NEMO augments it with potential cluster heads from
+adjacent groups. This process is repeated until nodes with sufficient
+resources for intermediate aggregation are found. In the worst case,
+NEMO needs to consolidate all groups.
+NEMO sorts the list 𝑛𝑘 using a distance function that penalizes
+nodes with significantly lower capacities than others in their group.
+This reduces the number of replicas and prevents the selection of The physical nodes hosting the newly created replicas are the
+cluster heads for the recently formed aggregation level. After each
+iteration, NEMO sets the cluster heads of the current level as the
+new upstream nodes. Additionally, it merges clusters if cluster
+heads in different groups overlap or are in close proximity. This
+iterative process continues until the required capacities of the sink
+do not exceed its available capacities. Each iteration reduces the
+number of required capacities, guaranteeing NEMO’s convergence.
+
+
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+latex
+Kopieren
+Bearbeiten
+\subsection{Setting up NEMO+~\label{subsec:nemo_setup}}
+NEMO+ uses the 2-dimensional coordinates from Vivaldi, where the energy consumption between node pairs corresponds to their Euclidean distance in the cost space. NEMO+ operates through three iterative phases: pre-processing, virtual operator placement, and re-assignment and replication.
+
+\subsubsection{Capacities and Weights~\label{subsubsec:capacities}}
+In NEMO+ simulations, various capacity distributions across nodes are explored, while the total capacity remains constant. For this experiment, the mean node capacity is set to 20, with variations in the median capacity assessed for performance impacts. Since these impacts are minor, only results for a median capacity of 20 are displayed.
+
+NEMO+ evaluates performance under different loads by assigning distinct link weights ($w$) to sources. Three configurations are considered:
+1. Uniform weight $w = 1$ for all sources.
+2. Uniform weight $w = 2$ for all sources.
+3. Random weights following a log-normal distribution within the range $[1,50]$ for each source.
+
+\subsubsection{Tuning Hyper-Parameters~\label{subsubsec:hyper_params}}
+To optimize NEMO+ performance, hyper-parameters such as step size $(ss)$ and merge factor $(mf)$ are fine-tuned for efficient convergence of aggregation trees. This involves evaluating NEMO+ under specific weights and capacities and plotting energy consumption results in a heat map.
+
+\begin{figure}[h]
+    \centering
+    \includesvg[width=1\textwidth]{./img/nemo/nemop_params_sl_capacity_100_w_weight_1.svg}
+    \caption{Energy consumption heat map for NEMO+ with $w=1$, used to determine optimal merge factor and step size.}
+    \label{fig:nemo_hyper_params}
+\end{figure}
+
+Figure~\ref{fig:nemo_hyper_params} shows energy consumption for a setup with capacity 20 and $w=1$. The heat map guides the selection of optimal parameters, with a merge factor of $0.5$ and a step size of $0.55$, minimizing energy consumption. These parameters are used for further evaluations of NEMO+.
+
+\subsubsection{Phases of NEMO+~\label{subsubsec:nemo_phases}}
+
+**Phase 1: Pre-processing**  
+Figure~\ref{fig:nemo_phases}(left) depicts the pre-processing phase, where nodes from the cost space are grouped to minimize energy consumption, resulting in four distinct clusters shown in different colors. The network sink is also placed during this phase.
+
+**Phase 2: Virtual Operator Placement**  
+In this phase (Figure~\ref{fig:nemo_phases}(middle)), NEMO+ calculates the optimal placement of a virtual node for each cluster. This virtual node acts as an operator positioned between upstream nodes and the sink. When the upstream nodes' capacities exceed the sink's capacity, NEMO+ initiates an iterative process, creating partial window aggregation operators to expand the aggregation tree with additional levels. During each iteration, NEMO+ identifies physical nodes for operator replication, stored in a lookup table. An iterative optimization algorithm determines the virtual node placement for each cluster, balancing the load by distributing it across multiple physical nodes.
+
+\begin{figure}[h]
+    \centering
+    \includesvg[width=1\textwidth]{./img/nemo/nemo_phases.svg}
+    \caption{NEMO+ phases: initial grouping (left), virtual operator placement (middle), and physical placement and replication (right).}
+    \label{fig:nemo_phases}
+\end{figure}
+
+**Phase 3: Re-assignment and Replication**  
+The final phase (Figure~\ref{fig:nemo_phases}(right)) involves determining the number and placement of replicas for each newly created operator $\omega_{ik}$ in cluster $k$ during iteration $i$, to evenly distribute the load. NEMO+ iterates through a sorted list $n_k$ of (node, available capacity) tuples, allocating capacities to nodes until the required capacities are met. For example, given a capacity requirement $C_r = 8$ and list $n_k = [(3, 2), (1, 4), (5, 6), (2, 10), (4, 3)]$, the resulting placement list would be $p_k = [(3, 2), (1, 4), (5, 2)]$, with a replication factor $\rho_{ik} = |p_k|$.
+
+Nodes in $n_k$ initially have available resources above a certain threshold. If insufficient, NEMO+ adds potential cluster heads from adjacent groups. This iterative process continues until sufficient resources are found, potentially consolidating all groups if needed. NEMO+ sorts $n_k$ using a distance function penalizing nodes with significantly lower capacities than their group peers, reducing replica numbers and preventing suboptimal node selection.
+
+After each iteration, the cluster heads of the current level serve as new upstream nodes. NEMO+ also merges clusters if cluster heads from different groups overlap or are in close proximity. The process iterates until the sink's capacity requirements are met, ensuring NEMO+'s convergence.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Figure~\ref{fig:nemo_phases}(middle) shows the optimal logical placement of the operator, referred to as virtual node, for each cluster of nodes. Lastly Figure~\ref{fig:nemo_phases}(right) shows the topology after NEMOs third phase, physical placement and replication\\
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+latex
+Kopieren
+Bearbeiten
+Figure~\ref{fig:nemo_phases}(middle) shows the optimal logical placement of the operator, referred to as a virtual node, for each cluster of nodes. Lastly, Figure~\ref{fig:nemo_phases}(right) illustrates the topology after NEMO+'s third phase, which involves the physical placement and replication of the operators.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+I compared following algorithms: 1) direct transmission to the sink (direct\_trx), 2) MST, 3) Leach, 4) Chain, 5) NEMO with $w=1$ and median = 20, 6) NEMO with $w=2$ and median = 20, and 7) NEMO with $w=ln(1,50)$ and median 20.\\
+Chain performed as expected by far the worst, as it just makes one chain connection to sink, which leads to some nodes requiring more than 9000mW to reach to sink. MST performed much better than Chain but still did not perform well. The minimum spanning tree created still had some very long paths to the sink which led to higher consumptions.\\
+The direction transmission to the sink has the best performance regarding the minimization of energy consumption, which is because of (explain here short)
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+latex
+Kopieren
+Bearbeiten
+I compared the following algorithms: 1) direct transmission to the sink (direct\_trx), 2) MST, 3) Leach, 4) Chain, 5) NEMO with $w=1$ and median = 20, 6) NEMO with $w=2$ and median = 20, and 7) NEMO with $w=\ln(1,50)$ and median = 20.\\
+Chain performed as expected by far the worst, as it establishes a single chain connection to the sink, which leads to some nodes requiring more than 9000mW to reach the sink. MST performed better than Chain but still did not achieve optimal results. The minimum spanning tree created still had some very long paths to the sink, resulting in higher energy consumptions.\\
+Direct transmission to the sink had the best performance in terms of minimizing energy consumption, due to its simplicity and the elimination of intermediate hops. Each node transmits directly to the sink, avoiding the energy overhead associated with multi-hop transmissions and intermediate relaying.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+dont wite it as latex
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+I compared the following algorithms: 1) direct transmission to the sink (direct_trx), 2) MST, 3) Leach, 4) Chain, 5) NEMO with 
+𝑤
+=
+1
+w=1 and median = 20, 6) NEMO with 
+𝑤
+=
+2
+w=2 and median = 20, and 7) NEMO with 
+𝑤
+=
+ln
+⁡
+(
+1
+,
+50
+)
+w=ln(1,50) and median = 20.
+
+Chain performed the worst as expected since it establishes a single chain connection to the sink. This results in some nodes consuming more than 9000mW to reach the sink due to the long paths. MST performed better than Chain but still showed suboptimal results. The minimum spanning tree created by MST had some lengthy paths to the sink, leading to higher energy consumption.
+
+Direct transmission to the sink achieved the best performance in terms of minimizing energy consumption. This is because each node transmits directly to the sink, avoiding the energy costs associated with multi-hop transmissions and intermediate relays, resulting in lower overall energy use.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+ For the same reason also Leach performs so well. Even though the clusters are suboptimal due to the randomness of Leach, but it still only uses very few hops to the sink, which leads to good energy consumption results.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+For the same reason, Leach also performs well. Although the clusters formed by Leach are suboptimal due to its randomness, the algorithm minimizes the number of hops to the sink. This reduces the energy consumption significantly, as fewer transmissions are required to deliver data, leading to efficient energy usage overall.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Figure~\ref{fig:consumption_comparison} shows how many nodes have a energy consumption in mW smaller than a certain amount.\\
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Figure~\ref{fig:consumption_comparison} illustrates the distribution of nodes based on their energy consumption in milliwatts (mW). It shows the number of nodes that have energy consumption below specific thresholds, providing a comparative view of energy efficiency across different algorithms.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+(w is for weight)
+NEMO with $w=2$ and $w=ln(1,50)$ approximately perform the same. NEMO with $w=ln(1,50)$ has more nodes with lower latencies but also more nodes with higher latency, which basically equal the results of the weight approaches. This is because of (explain here)
+
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+NEMO with 
+𝑤
+=
+2
+w=2 and 
+𝑤
+=
+ln
+⁡
+(
+1
+,
+50
+)
+w=ln(1,50) perform similarly overall, though there are differences in the distribution of latencies. NEMO with 
+𝑤
+=
+ln
+⁡
+(
+1
+,
+50
+)
+w=ln(1,50) results in more nodes with lower latencies as well as more nodes with higher latencies, balancing out the overall energy consumption results to match those of the fixed weight approaches. This occurs because the log-normal weight distribution introduces more variability in the node weights, leading to uneven load distribution. Some nodes benefit from lighter loads and thus have lower latencies, while others face higher loads, resulting in higher latencies. This variability averages out, yielding performance that is comparable to the more uniform 
+𝑤
+=
+2
+w=2 approach.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+I dont have latency i have consumption in milliwatts
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+NEMO with 
+𝑤
+=
+2
+w=2 and 
+𝑤
+=
+ln
+⁡
+(
+1
+,
+50
+)
+w=ln(1,50) perform similarly overall in terms of energy consumption. The reason for this is that while 
+𝑤
+=
+ln
+⁡
+(
+1
+,
+50
+)
+w=ln(1,50) introduces more variability in node weights, resulting in some nodes consuming less energy and others consuming more, the overall energy consumption ends up balancing out. The log-normal distribution of weights leads to some nodes benefiting from lower consumption due to lighter loads, while others face higher consumption due to heavier loads. This distribution of energy consumption across nodes ultimately results in a performance that approximates the fixed weight approach of 
+𝑤
+=
+2
+w=2, as the variation in individual node consumption is balanced across the entire system.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+why is there less consumption wenn less weight and more consumption when more weight
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+In the context of NEMO and the weight-based approach, the weight parameter influences the prioritization of certain nodes and their role in the network. Here's why energy consumption tends to be lower with less weight and higher with more weight:
+
+Lower Weight (w=1 or lower weights): When a node is assigned a lower weight, it means that the node is less "important" or has a lower "load" compared to other nodes. As a result, the network does not prioritize this node as heavily for data aggregation and forwarding. Consequently, the node consumes less energy because it does not need to handle as much traffic or act as a relay point for a significant portion of the network. The communication paths can be shorter, and fewer hops may be needed to reach the sink, minimizing the energy required.
+
+Higher Weight (w=2 or higher weights): When the weight of a node increases, it is treated as more significant, meaning it takes on a larger share of the data aggregation and forwarding responsibilities. This results in higher energy consumption because the node is tasked with handling more traffic. Additionally, higher-weighted nodes may be selected to participate more actively in routing or aggregation, requiring them to process more data or forward it across longer distances. This increases the amount of energy used.
+
+So, the key reason for the correlation between weight and energy consumption is that higher-weighted nodes are tasked with more critical functions (such as relaying more traffic or aggregating more data), leading to increased energy consumption. Conversely, nodes with lower weights have fewer responsibilities, resulting in reduced energy demands.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+NEMO with $w=1$ basically performs twice as good as NEMO with $w=2$, minimal better than Leach and nearly as good as direct\_trx. This is because of...
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+NEMO with 
+𝑤
+=
+1
+w=1 performs significantly better than NEMO with 
+𝑤
+=
+2
+w=2, minimally better than Leach, and nearly as good as direct_trx because with a lower weight (
+𝑤
+=
+1
+w=1), nodes are assigned less importance in the aggregation process, leading to more efficient energy consumption. In this configuration, the nodes in the network are less burdened with heavy aggregation or routing responsibilities. As a result, communication paths are more optimal, requiring fewer hops and reducing energy consumption.
+
+This is also the reason it performs similarly to direct transmission to the sink (direct_trx), where data is transmitted directly to the sink without much aggregation. Since 
+𝑤
+=
+1
+w=1 reduces the need for complex aggregations and long-range routing, it minimizes energy use. In contrast, higher weights (
+𝑤
+=
+2
+w=2) increase the load on nodes, leading to longer communication paths and higher energy consumption, which is why NEMO with 
+𝑤
+=
+2
+w=2 performs less efficiently.
+
+Moreover, compared to Leach, which involves a random clustering process, NEMO with 
+𝑤
+=
+1
+w=1 benefits from more balanced and optimized node responsibilities without the unpredictability of clustering, leading to slightly better performance in energy consumption.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Excluding NEMO, Chain performs early on the best due to its higher number of cluster heads $(N-2)$, leading to better load balancing and a slower increase in overloaded nodes as heterogeneity rises. In contrast, MST with $(N-1)/2$ cluster heads and LEACH with $0.1\times N$ cluster heads, experience more overloaded nodes because of their worse ability to balance the load.\\
+\subsubsection{Comparison Conclusion\label{subsubsec:comparison_conclusion}}
+While Leach had a good performance regarding the power consumption it performed especially bad in reducing overloaded nodes, which leads to a longer up-time of the network and therefore also increasing energy consumption. For Chain it basically is the other way around, it had horendous performance in the energy consumption comparison but performed consideratly well at reducing overloaded nodes. MST performed in both approaches mid, it had a way higher consumption than NEMO and LEACH but way lower tha Chain and also in reducing clusterheads it performed well.\\
+But none of the approaches can compare to NEMO. NEMO prevented overloaded nodes even for low median capacities and also performed realy well in reducing the energy consumption. 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Excluding NEMO, Chain performs early on the best due to its higher number of cluster heads (
+𝑁
+−
+2
+N−2), which leads to better load balancing and a slower increase in overloaded nodes as heterogeneity rises. The increase in overloaded nodes is a key factor that can impact the longevity and efficiency of a network, and Chain’s approach minimizes this rise effectively by distributing the load more evenly across the nodes.
+
+In contrast, MST with 
+(
+𝑁
+−
+1
+)
+2
+2
+(N−1)
+	​
+
+ cluster heads, and LEACH with 
+0.1
+×
+𝑁
+0.1×N cluster heads, experience more overloaded nodes due to their poorer ability to balance the load. Both algorithms, especially LEACH, use fewer cluster heads, leading to higher energy consumption for certain nodes and a higher risk of node overload. These load imbalances are a critical disadvantage as they can cause nodes to fail more quickly, shortening the network's operational time.
+
+Comparison Conclusion
+
+While LEACH showed good power consumption results, it performed poorly in reducing overloaded nodes, which ultimately leads to a shorter up-time for the network and increased energy consumption as nodes become overburdened. This issue arises from the random clustering process in LEACH, where some clusters may become too large or unevenly distributed, causing certain nodes to work harder and consume more energy.
+
+For Chain, the situation was reversed—it performed terribly in the energy consumption comparison but was significantly better at reducing overloaded nodes. The higher number of cluster heads in Chain leads to more evenly distributed workloads, which prevents individual nodes from overloading and extending the network’s operational lifetime. However, the downside is that the inefficiency in energy use during transmission makes it less effective overall.
+
+MST performed in the middle of both approaches, with higher energy consumption than NEMO and LEACH, but lower than Chain. It also performed reasonably well at reducing overloaded nodes, thanks to a moderate number of cluster heads (
+(
+𝑁
+−
+1
+)
+2
+2
+(N−1)
+	​
+
+), but still struggled with more energy-intensive communication paths compared to NEMO.
+
+Ultimately, none of these approaches can compare to NEMO, which not only prevented overloaded nodes even with lower median capacities but also performed exceptionally well in reducing overall energy consumption. NEMO's ability to balance the load efficiently while minimizing energy use makes it the most robust approach for managing network resources, especially in scenarios where both energy efficiency and preventing node overload are critical to maintaining long network lifetimes.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+This screenshot is for the section: impact of estimation errors.
+Explain what you see and what the reasons are
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+This bar chart compares the energy consumption in milliwatts (mW) across different algorithms—direct_trx, LEACH, MST, and NEMO—while highlighting three metrics for each:
+
+Real (mean): Actual mean energy consumption observed.
+Estimated (mean): The predicted or estimated mean energy consumption based on the models.
+90th percentile: The consumption value below which 90% of the nodes fall, representing the upper range of typical energy consumption.
+Observations:
+
+Direct_trx:
+
+Real mean (599.7 mW) is close to the 90th percentile, suggesting a fairly uniform distribution of energy consumption across nodes.
+Estimated mean (286.7 mW) is significantly lower than the real mean, indicating substantial underestimation in predictions. This is likely because the model fails to account for all contributing factors such as long-range transmissions for isolated nodes.
+
+LEACH:
+
+Real mean (591.2 mW) is close to direct_trx but slightly lower, reflecting the efficiency of hierarchical clustering in reducing energy consumption.
+Estimated mean (301.8 mW) again underestimates the real value, but to a lesser extent compared to direct_trx, as LEACH's clustered communication is easier to predict accurately.
+90th percentile is relatively low, showing that most nodes consume a similar amount of energy without extreme outliers.
+
+MST:
+
+Real mean (1948.5 mW) is much higher than the other approaches, showing its inefficiency in minimizing energy consumption. The long paths to the sink in the spanning tree likely result in high transmission costs.
+Estimated mean (407.0 mW) is drastically lower, reflecting a significant misprediction. This underestimation may stem from the inability to account for the disproportionate energy burden placed on certain nodes due to the MST structure.
+90th percentile is exceptionally high, further emphasizing the large energy disparities among nodes in MST.
+
+NEMO:
+
+Real mean (598.2 mW) is comparable to direct_trx and LEACH, showing its excellent performance in energy efficiency despite its more complex operational framework.
+Estimated mean (287.5 mW) is again significantly underestimated but aligns more closely with the real mean compared to other approaches, indicating better predictability due to NEMO’s structured design.
+90th percentile is low, indicating that NEMO distributes the energy load more evenly, avoiding extreme outliers in consumption.
+Reasons for the Observations:
+
+Underestimation of Energy Consumption:
+For all algorithms, the estimated mean consistently underestimates the real mean, suggesting inaccuracies in the modeling or simulation assumptions. These inaccuracies may include:
+
+Ignoring energy costs associated with retransmissions or collisions.
+Oversimplified assumptions about transmission distances or environmental factors.
+Overlooking node heterogeneity or variations in load distribution.
+
+MST's High Real Mean:
+The poor performance of MST stems from its topology, where certain nodes must handle disproportionately high transmission loads due to long communication paths. This leads to extreme energy consumption for some nodes, as reflected in the high 90th percentile.
+
+NEMO’s Balanced Energy Distribution:
+NEMO effectively minimizes energy consumption and balances the load across nodes, as evidenced by its relatively low real mean and 90th percentile. Its structured approach to operator placement and replication ensures no single node is overly burdened.
+
+Direct_trx and LEACH Similarities:
+Both algorithms achieve low energy consumption due to their direct or near-direct communication with the sink. However, LEACH's clustering provides a slight advantage over direct_trx in real energy consumption.
+
+In summary, the chart demonstrates NEMO’s superiority in energy efficiency and load balancing, while also highlighting the general challenges in accurately estimating energy consumption for all algorithms.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+I want you to be more generell In a text instead of bullet points for each
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+The bar chart compares the energy consumption of four algorithms—direct transmission to the sink (direct_trx), LEACH, MST, and NEMO—using three key metrics: the real mean energy consumption, the estimated mean energy consumption, and the 90th percentile of consumption. These metrics provide insight into both the efficiency of the algorithms and the accuracy of the energy predictions.
+
+Across all algorithms, a consistent pattern emerges: the estimated mean energy consumption underestimates the real mean. This discrepancy likely arises from oversimplified modeling assumptions, such as neglecting retransmissions, collisions, or environmental variations. Additionally, the 90th percentile values highlight the extent of energy distribution imbalances within each algorithm, with some performing significantly worse in distributing the energy load across nodes.
+
+Direct transmission to the sink (direct_trx) demonstrates strong performance, with low real mean energy consumption that is only slightly higher than LEACH and NEMO. The 90th percentile is also relatively close to the real mean, indicating uniform energy distribution among nodes. However, the estimated mean for direct_trx is substantially lower than the real mean, suggesting that the model fails to account for long-range transmissions that disproportionately affect some nodes.
+
+LEACH performs similarly to direct_trx in terms of real energy consumption but benefits from its clustering mechanism, which reduces the number of transmissions. Its energy distribution is balanced, as shown by the relatively low 90th percentile. However, the estimated mean again underestimates the real value, though the margin of error is smaller than for other algorithms, possibly because LEACH’s hierarchical structure is simpler to predict.
+
+MST, in contrast, has a much higher real mean energy consumption, far exceeding that of the other algorithms. This inefficiency arises from its topology, where some nodes are required to handle long transmission paths to the sink, leading to significantly higher energy costs for these nodes. The 90th percentile value for MST is exceptionally high, reflecting the severe imbalance in energy distribution, with certain nodes disproportionately overburdened. The estimated mean for MST, however, is drastically lower than the real mean, highlighting the model’s failure to capture the inefficiencies inherent in the MST structure.
+
+NEMO outperforms the other algorithms, achieving energy consumption nearly as low as direct_trx and LEACH while maintaining excellent load balancing, as evidenced by its low 90th percentile value. The algorithm’s structured approach to operator placement and replication ensures that no single node is excessively burdened. While the estimated mean for NEMO is also lower than the real mean, the difference is less pronounced compared to other algorithms, indicating that its predictable behavior aligns better with the model’s assumptions.
+
+In conclusion, the chart illustrates NEMO’s superiority in energy efficiency and load balancing, demonstrating its ability to minimize energy consumption while distributing the load evenly among nodes. It also highlights the limitations of estimation models, which tend to underestimate the real energy consumption for all algorithms due to oversimplified assumptions about node behavior and network dynamics.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Network coordinate systems introduce an estimation error as they collect measurements due to the TIV~\ref{sec:tiv}. Therefore I analyize the impact of this error by comparing the performance of the tested approaches with power consumption estimates from the network coordinate system with the actual power consumption measurements.\\
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Network coordinate systems inherently introduce estimation errors because they rely on collected measurements that can be influenced by Triangle Inequality Violations (TIV), as discussed in Section~\ref{sec:tiv}. To assess the impact of these errors, I analyzed the performance of the tested approaches by comparing the estimated power consumption from the network coordinate system with the actual measured power consumption.
+
+This comparison highlights the discrepancies introduced by estimation errors. The actual power consumption measurements serve as a baseline to evaluate how well the estimation aligns with real-world values. Such errors can arise due to inaccuracies in capturing the true cost relationships between nodes or the simplifications inherent in network coordinate systems. By juxtaposing the estimated and actual power consumption, the analysis provides insight into the reliability of the network coordinate system and its influence on the performance evaluation of different approaches.
+
+The results reveal how estimation errors may lead to overly optimistic projections, particularly for approaches like MST, which exhibit significant discrepancies between estimated and actual energy consumption. These findings underscore the importance of accounting for such errors when evaluating network algorithms and emphasize the robustness of approaches like NEMO, which are less affected by estimation inaccuracies.
+
+2/2
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+\subsection{Impact of Estimation Errors\label{subsec:estiamtion_impact}}
+Network coordinate systems introduce an estimation error as they collect measurements due to the TIV~\ref{sec:tiv}. Therefore I analyize the impact of this error by comparing the performance of the tested approaches with power consumption estimates from the network coordinate system with the actual power consumption measurements.\\
+
+lift this to thesis level english
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+\subsection{Impact of Estimation Errors\label{subsec:estimation_impact}}
+Network coordinate systems inherently introduce estimation errors as they rely on collected measurements that are susceptible to inaccuracies caused by Triangle Inequality Violations (TIV) (see Section~\ref{sec:tiv}). To evaluate the influence of these errors, I conducted an analysis comparing the estimated power consumption derived from the network coordinate system with the actual measured power consumption. This comparison provides a detailed assessment of how estimation inaccuracies affect the performance evaluation of the tested approaches.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+\subsection{Impact of Estimation Errors}
+\begin{figure}[h]
+    \centering
+    \includesvg[width=0.8\textwidth]{./img/eval/comparison_energy.svg}
+    \caption{Performance comparison between real power consumption measurements and NCS estimates.}
+    \label{fig:estimation_errors}
+\end{figure}
+Figure~\ref{fig:estimation_errors} shows the real power consumption measurements and the estimated mean power consumption are really different. Even for grouping based approaches like Leach and NEMO the real power consumption is twice is high as the estimated. But while Leach has basically the same 90th percentile error, direct transmission (direct\_trx) and NEMO perform rougly as same bad.\\
+For MST the real power consumption is even five times higher and for Chain, which is not contained in the figure due to to high consumption measurements, the real is eight times higher. Those two perform so bad, because they need pairwise correct power consumptions between all nodes. NEMO and Leach only need pairwise correct measurements between clusterheads and leaf nodes to clusterheads.\\
+This shows that (continue)
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+This shows that approaches requiring accurate pairwise measurements across the entire network, such as MST and Chain, are significantly more affected by estimation errors introduced by the network coordinate system. Their reliance on precise power consumption values for all possible node-to-node connections makes them particularly vulnerable to the inaccuracies caused by estimation errors. Consequently, these approaches exhibit drastically higher discrepancies between estimated and real power consumption, as evidenced by the fivefold and eightfold increases for MST and Chain, respectively.
+
+In contrast, grouping-based approaches like NEMO and Leach demonstrate greater resilience to these errors. Since their performance depends primarily on the accuracy of measurements between cluster heads and leaf nodes, as well as among cluster heads themselves, they are less sensitive to network-wide inaccuracies. However, despite this resilience, the real power consumption for these approaches is still significantly higher than the estimated values—roughly double in the case of both NEMO and Leach.
+
+Direct transmission (direct_trx) performs similarly poorly to NEMO in terms of estimation error impact, suggesting that the direct nature of its transmission links is also susceptible to inaccuracies in estimated values. Overall, these findings highlight the critical importance of accurate measurement collection in network coordinate systems, particularly for approaches heavily reliant on network-wide precision. It underscores the need for robust error mitigation techniques or alternative methods that minimize reliance on globally accurate pairwise estimates.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+In this section, I will present a detailed overview of the concepts and tools that I used in this thesis.\\
+The Free-Space path loss equation~\ref{sec:pathloss} is crucial for understanding the energy inefficiencies that arise when the transmission distance increases.\\
+To measure the real-world effects of this theoretical concept, I conducted experiments using the FIT/IoT-Lab platform~\ref{sec:fitiot}. The FIT/IoT-Lab provides a controlled environment with a vast number of nodes. It offers a variety of different boards and sites.\\
+For my experiment, I used the IoT-Lab M3 board~\ref{subsec:board}, which offered me some key features~\ref{subsec:board}, which allowed me to create a reproducible experiment on the energy consumption of distributed wireless nodes.\\
+Then I used the Vivaldi~\ref{sec:vivaldi} algorithm, to construct a two-dimensional Euclidean Network Coordinate System (NCS) from the energy consumption measurements. This NCS is then used as the cost-space for the resource-aware optimization aproach NEMO. The performance of NEMO is subsequently evaluated and compared against other approaches for wireless signal networks (WSN).
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+In this section, I will provide a comprehensive overview of the fundamental concepts and tools utilized throughout this thesis.
+
+The Free-Space Path Loss equation (Section~\ref{sec:pathloss}) plays a pivotal role in understanding the energy inefficiencies that occur as transmission distances increase. This theoretical framework underpins the challenges associated with energy consumption in wireless sensor networks (WSNs), highlighting the critical importance of optimizing network configurations to mitigate these inefficiencies.
+
+To evaluate the real-world implications of this theoretical model, experiments were conducted using the FIT/IoT-Lab platform (Section~\ref{sec:fitiot}). The FIT/IoT-Lab offers a controlled experimental environment featuring a large number of nodes distributed across multiple sites. This platform provides a diverse selection of boards, making it ideal for energy consumption studies in distributed wireless networks. For my experiments, I selected the IoT-Lab M3 board (Section~\ref{subsec:board}) due to its specific features that enabled the creation of reproducible experiments. These features were instrumental in accurately measuring and analyzing the energy consumption of distributed wireless nodes under varying network configurations.
+
+Subsequently, the Vivaldi algorithm (Section~\ref{sec:vivaldi}) was employed to construct a two-dimensional Euclidean Network Coordinate System (NCS) based on the collected energy consumption measurements. This NCS served as the cost-space for the resource-aware optimization approach, NEMO. By leveraging the NCS, NEMO was able to optimize network configurations and reduce energy consumption effectively.
+
+The performance of NEMO was then rigorously evaluated and benchmarked against other optimization approaches for wireless sensor networks. This comparative analysis provides valuable insights into the advantages and limitations of NEMO within the context of distributed wireless networks, emphasizing its potential as a resource-aware solution to energy inefficiencies.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+\section{Free-Space Path Loss Equation\label{sec:pathloss}}
+Sending data over long distances becomes energy inefficient very quickly. This is shown in the Free-space path loss equation~\cite{noauthor_free-space_nodate}:
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+\section{Free-Space Path Loss Equation\label{sec:pathloss}}
+
+When transmitting data over long distances, the energy consumption increases significantly, making it an inefficient process. This phenomenon is accurately described by the Free-Space Path Loss (FSPL) equation~\cite{noauthor_free-space_nodate}. The FSPL equation quantifies the loss of signal strength as it travels through free space (i.e., an environment without obstacles or interference). The equation is essential for understanding how the signal power decreases over distance, and it highlights the challenges in energy consumption that arise in wireless communication systems, particularly as the transmission range extends.
+
+The FSPL equation is expressed as:
+
+FSPL
+=
+20
+log
+⁡
+10
+(
+𝑑
+)
++
+20
+log
+⁡
+10
+(
+𝑓
+)
++
+𝐶
+FSPL=20log
+10
+	​
+
+(d)+20log
+10
+	​
+
+(f)+C
+
+Where:
+
+𝑑
+d is the distance between the transmitter and receiver in meters,
+𝑓
+f is the frequency of the signal in Hertz,
+𝐶
+C is a constant that incorporates the physical properties of the environment (such as the speed of light and the permeability of free space).
+
+As the distance (
+𝑑
+d) increases, the path loss increases logarithmically, causing the signal strength to drop exponentially with respect to distance. This means that longer transmission ranges require significantly more energy to maintain a reliable signal. Additionally, higher frequencies (
+𝑓
+f) also contribute to increased path loss. Therefore, the FSPL equation serves as a crucial model for predicting and mitigating energy inefficiencies in wireless networks, especially in large-scale or distributed systems.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+just rewrite this sentence on thesis level english. dont add anything after
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Sending data over long distances becomes highly energy inefficient, as demonstrated by the Free-Space Path Loss equation~\cite{noauthor_free-space_nodate}.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+As described in chapter~\ref{cha:chapter3} the research challenge of this thesis is to find out if the NEMO approach does not only work on latency constraints but also for energy consumption constraints. The computation of decomposable aggregation functions for resource constraint topologies is currently only addressed by wireless sensor networks (WSNs). These usually use three types of aggregation approaches.
+\section{Cluster-based approaches}
+\subsection{LEACH}
+\subsubsection{LEACHSF}
+\subsection{Minimum Spanning Tree of Prim}
+\subsubsection{HEED}
+\subsubsection{CLUDDA}
+\section{Tree-based approaches}
+\subsection{EADAT}
+\subsection{PEDAP}
+\section{Chain-based approaches}
+\subsection{PEGASIS}
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a rewrite of your text at the thesis level with refined language and flow:
+
+As outlined in Chapter~\ref{cha:chapter3}, the primary research objective of this thesis is to evaluate whether the NEMO approach, originally designed for latency constraints, can also be effectively applied to energy consumption constraints. The challenge lies in computing decomposable aggregation functions within resource-constrained topologies, a problem predominantly addressed in the domain of wireless sensor networks (WSNs). Existing solutions in this area can be broadly categorized into three types of aggregation approaches: cluster-based, tree-based, and chain-based methods.
+
+Cluster-Based Approaches
+LEACH
+LEACHSF
+Minimum Spanning Tree of Prim
+HEED
+CLUDDA
+Tree-Based Approaches
+EADAT
+PEDAP
+Chain-Based Approaches
+PEGASIS
+
+This maintains the structure and purpose of your content while refining the sentence construction for better clarity and academic tone. Let me know if you’d like me to expand on or adjust any section!
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+In cluster based approaches the nodes get groupe into clusters and then transmit data to a cluster head, which aggregates all the incoming data streams and then sends a concise digest to the sink.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+In cluster-based approaches, nodes are organized into clusters, where each cluster transmits its data to a designated cluster head. The cluster head aggregates the incoming data streams, processes them into a concise digest, and subsequently forwards this digest to the sink.
+
+2/2
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+CLUDDA (Clustered Diffusion with Dynamic Data Aggregation) is a data-centric communication protocol for wireless sensor networks, designed to enhance efficiency and adaptability. Building on Directed Diffusion, CLUDDA incorporates clustering to reduce redundant transmissions during interest propagation by limiting communication to clusterheads and gateways. A key innovation is the dynamic interest message format, which includes the entire query definition, enabling nodes to process unfamiliar queries even in environments for which they were not originally configured.\\
+This design introduces features like layered data aggregation, which incrementally reduces data as it propagates, which minimizes transmissions, an interest transformation, which leverages cached queries to reduce processing and memory usage and dynamic aggregation points, ensuring data is aggregated close to the source, even as the network topology shifts. The protocol also supports network healing by allowing intermediate nodes to re-establish communication paths when failures occur. 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+CLUDDA (Clustered Diffusion with Dynamic Data Aggregation) is a data-centric communication protocol tailored for wireless sensor networks, emphasizing efficiency and adaptability. It builds on the principles of Directed Diffusion, introducing clustering to minimize redundant transmissions during interest propagation by restricting communication to cluster heads and gateways.
+
+One of its key innovations is the dynamic interest message format, which encapsulates the complete query definition. This feature enables nodes to process unfamiliar queries, even in scenarios they were not originally designed to handle. CLUDDA also incorporates layered data aggregation, incrementally reducing data volume as it propagates through the network, thereby minimizing transmissions.
+
+Additionally, it leverages interest transformation, utilizing cached queries to optimize processing and memory usage, and employs dynamic aggregation points to ensure data is aggregated close to the source, adapting seamlessly to shifting network topologies. The protocol further enhances robustness through its network healing capabilities, allowing intermediate nodes to re-establish communication paths in the event of failures.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+CLUDDA (Clustered Diffusion with Dynamic Data Aggregation) is a data-centric communication protocol for wireless sensor networks, designed to enhance efficiency and adaptability. Building on Directed Diffusion, CLUDDA incorporates clustering to reduce redundant transmissions during interest propagation by limiting communication to cluster heads and gateways.\\
+A key innovation is the dynamic interest message format, which includes the entire query definition, enabling nodes to process unfamiliar queries even in environments for which they were not originally configured.\\
+Cludda introduces a new format of the interest message, which allows nodes to interpret unfamiliar queries so that they can even operate in environments which they were not originally designed for at the time of network deployment. This new format of the interest message also leads to the development of certain unique features such as layered data aggregation, interest transformation and dynamic data aggregation points all of which would eventually lead to better system performance.\\
+CLUDDA also supports network healing by allowing intermediate nodes to re-establish communication paths when failures occur. 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+CLUDDA (Clustered Diffusion with Dynamic Data Aggregation) is a data-centric communication protocol for wireless sensor networks, designed to optimize efficiency and adaptability. Building upon the principles of Directed Diffusion, CLUDDA incorporates clustering to reduce redundant transmissions during interest propagation by restricting communication to cluster heads and gateways.
+
+A key advancement of CLUDDA is its dynamic interest message format, which embeds the complete query definition. This enables nodes to interpret and process unfamiliar queries, allowing them to operate effectively even in environments for which they were not originally configured at the time of network deployment. This innovative format gives rise to features such as layered data aggregation, interest transformation, and dynamic aggregation points, all of which collectively improve overall system performance by minimizing transmissions and enhancing processing efficiency.
+
+Additionally, CLUDDA supports network resilience through its network healing mechanism, which enables intermediate nodes to re-establish communication paths in the event of failures, ensuring consistent and reliable operation.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+Chain based approaches organize nodes into a linear chain for data aggregation. This is either achieved using a greedy algorithm, or the sink can determine the chain in a centralized manner.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Chain-based approaches structure nodes into a linear chain to facilitate data aggregation. This can be accomplished either through a greedy algorithm, where nodes locally determine the next link in the chain, or through a centralized method, where the sink node computes the chain and communicates the configuration to the network.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+hi
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Hey! What's up? 😊
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+\chapter{Research Problem\label{cha:chapter3}}
+In stream processing decomposable aggregation functions (DAF) are commonly used and therefore NEMO (section~\ref{sec:nemo}) was proposed to tackle the problem of the DAF operator placement in resource-constrained and unreliable geo-distributed settings.\\
+My overarching goal of this thesis is to enable energy-efficient operator placement for large scale topologies. To achieve that I will extend the NEMO approach to optimize on minimizing the energy consumption. The aim is to adapt NEMO to an energy consumption cost space and demonstrate how it affects its performance.\\
+The result will determine whether DAF operator placement within an energy consumption cost space for large scale topologies will be usable for NEMO.\\
+
+\section{Precise Research Statement\label{sec:statement}}
+In this thesis I want to enable the energy-efficient operator placement for large scale topologies by adapting NEMO to an energy consumption cost space.\\
+
+can you rewrite this in thesis level english
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+\chapter{Research Problem\label{cha:chapter3}}
+
+Decomposable aggregation functions (DAFs) are widely utilized in stream processing, prompting the development of NEMO (Section~\ref{sec:nemo}) to address the challenge of DAF operator placement in resource-constrained and unreliable geo-distributed environments.
+
+The primary objective of this thesis is to enable energy-efficient operator placement for large-scale network topologies. To achieve this, I will extend the NEMO framework to optimize for minimizing energy consumption. Specifically, the goal is to adapt NEMO to operate within an energy consumption cost space and to evaluate the impact of this adaptation on its performance.
+
+The outcomes of this research will determine the feasibility and effectiveness of employing NEMO for DAF operator placement in an energy consumption cost space within large-scale topologies.
+
+\section{Precise Research Statement\label{sec:statement}}
+
+This thesis aims to enable energy-efficient operator placement in large-scale topologies by adapting the NEMO framework to optimize for energy consumption within a dedicated cost space.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+\section{Precise Research Statement\label{sec:statement}}
+In this thesis I aim to enable the energy-efficient operator placement for large scale topologies by adapting the NEMO approach to an energy consumption cost space.\\
+
+\section{Scope of the Thesis\label{sec:scope}}
+
+\subsection{Subproblems}
+To achieve the goal of this thesis I have to address several subproblems.
+
+\subsubsection{Collect an Energy Consumption Dataset}
+First of all I have to collect data for an energy consumption dataset.\\
+Therefore I have to create a representative IoT environment, which I will use FIT/IoT-LAB for (section~\ref{sec:topology_setup}). After creating a representative topology I have to create a firmware for the sender (section~\ref{sec:sender}) and receiver (section~\ref{sec:receiver}) nodes, to control the experiment.\\
+The energy data I gather from this experiment has to then be put into a 2-dimensional matrix, which contains the energy transmission data from every node pair in the topology (section~\ref{sec:trans_pow_mat}).\\
+This matrix containing the transmission power has to be then transformed to contain the actual energy consumption in mW (section~\ref{sec:pow_cons_matrix}).\\ 
+
+\subsubsection{Create a Cost Space}
+Vivaldi can use this matrix to predict a network coordinate system (NCS) for the energy consumption data which is contained in this matrix (section~\ref{subsec:vivaldi_eval}). There I will also analyzie potential triangle inequality violations (section~\ref{subsubsec:tiv_eval}). This NCS can then be used as NEMOs cost space. 
+
+\subsubsection{Evaluate the results of NEMO}
+Lastly I will evaluate NEMOs results with energy consumption as its cost space. 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+\section{Precise Research Statement\label{sec:statement}}
+The objective of this thesis is to enable energy-efficient operator placement in large-scale topologies by adapting the NEMO framework to optimize within an energy consumption cost space.
+
+\section{Scope of the Thesis\label{sec:scope}}
+
+\subsection{Subproblems}
+To achieve the stated goal, several key subproblems must be addressed:
+
+\subsubsection{Collecting an Energy Consumption Dataset}
+The first step involves gathering data to construct an energy consumption dataset. To accomplish this, I will create a representative IoT environment using the FIT/IoT-LAB platform (Section~\ref{sec:topology_setup}). Within this environment, I will design and implement firmware for both sender (Section~\ref{sec:sender}) and receiver (Section~\ref{sec:receiver}) nodes to control and execute the experiment.
+
+The energy data collected from this experiment will be organized into a two-dimensional matrix, capturing the transmission energy data between all node pairs in the topology (Section~\ref{sec:trans_pow_mat}). This transmission power matrix will then be transformed into a representation of the actual energy consumption in milliwatts (Section~\ref{sec:pow_cons_matrix}).
+
+\subsubsection{Creating a Cost Space}
+The Vivaldi algorithm will be utilized to generate a network coordinate system (NCS) based on the energy consumption data in the matrix (Section~\ref{subsec:vivaldi_eval}). During this process, I will also analyze potential triangle inequality violations (Section~\ref{subsubsec:tiv_eval}). The resulting NCS will then serve as the cost space for NEMO.
+
+\subsubsection{Evaluating the Results of NEMO}
+Finally, I will evaluate the performance of NEMO using energy consumption as the cost space. This evaluation will provide insights into the feasibility and effectiveness of the proposed energy-efficient operator placement strategy.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+\subsection{Out of Scope}
+Out of scope for this Thesis is to conduct energy consumption measurement on other IoT testbeds than the FIT/IoT-Lab testbed. Testing other energy related metrics other than power, such as Volt and Ampere, as a cost space for NEMO. And I also will only compare my results to same approaches NEMO with latency as a cost space was compared, which are LEACH, Chain and MST.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+\subsection{Out of Scope}
+This thesis does not include energy consumption measurements conducted on IoT testbeds other than the FIT/IoT-Lab. Additionally, it excludes exploring energy-related metrics other than power, such as voltage or current (e.g., Volt and Ampere), as potential cost spaces for NEMO. Furthermore, the evaluation and comparison of results will be limited to the same approaches against which NEMO with latency as a cost space was compared: LEACH, Chain, and MST.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+A reason for the bad predictions could be corrupted data in the gateway matrix, due to a bad choice for the gateway algorithm which led to a high TIVs or non constant environmental factores which obstructed the wireless signal during the sending phase. This could happen when someone else uses neighboring or close nodes for their experiment which weakened our signal. So during the experiment it could happen that for two nodes A and B, that A reached B with a transmission power of -10dBm and B reached A with a transmission power of +3dBm. This makes it very tough for Vivaldi.  
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+One potential reason for the poor predictions could be corrupted data in the gateway matrix, caused by an unsuitable gateway algorithm that resulted in high triangle inequality violations (TIVs) or non-constant environmental factors obstructing the wireless signal during the transmission phase. For instance, interference could arise from neighboring experiments using nearby nodes, which might weaken the signal. Consequently, during the experiment, it is possible for two nodes, A and B, to experience inconsistent transmission power levels—for example, A reaching B with a transmission power of -10 dBm while B reaches A with +3 dBm. Such discrepancies significantly challenge the Vivaldi algorithm's ability to produce accurate predictions.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+In summary, the results highlight the overall poor performance and therefore the high impact of estimation errors. These estimation errors most likely arise from the bad predictions by Vivaldi or come from corrupted data in the data gathering phase, which is caused by non constant environmental factors. 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+In summary, the results underscore the overall poor performance and the substantial impact of estimation errors. These errors are most likely attributable to inaccurate predictions by the Vivaldi algorithm or to corrupted data during the data collection phase, which may have been caused by non-constant environmental factors.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+But also non-constant environmental factors obstructing the wireless signal during the transmission phase distort the data. For instance, interference could arise from neighboring experiments using nearby nodes, office workers using their electronical devices, moving objects in the building, or nodes crashing during an experiment, which all could weaken the signal or change the result drasticly.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Additionally, non-constant environmental factors obstructing the wireless signal during the transmission phase further distort the data. For example, interference could result from neighboring experiments utilizing nearby nodes, office workers using electronic devices, moving objects within the building, or nodes crashing during the experiment. Any of these factors could significantly weaken the signal or drastically alter the results.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+These problems could be reduced in future work by contacting the FIT/IoT-LAB to fully claim a site so that no one else can use it and conduct the experiments at night times, when there are no office workers. In future work also other boards with different radio antennas should be used, in which the transmitting consumption actually exceeds the receiving consumption to highlight the exponential increase in energy consumption further, this would then also enable to test different gateway algorithms.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+These issues could be mitigated in future work by coordinating with the FIT/IoT-LAB to fully reserve a site, ensuring that no other users interfere with the experiments. Additionally, conducting experiments during nighttime, when there is minimal activity from office workers, would help reduce environmental disruptions. Future research could also explore the use of different boards with varying radio antennas, particularly those where transmission energy consumption significantly exceeds reception energy consumption. This would better emphasize the exponential increase in energy consumption and enable testing of alternative gateway algorithms.
+
+2/2
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+In this thesis I researched if extending NEMO by an energy consumption cost space, enables energy efficient DAF operator placement for resource-constraint and large geo-distributed topologies. Therefore I gathered a representative energy consumption measurement dataset from the FIT/IoT-LAB, created a 2-dimensional energy consumption cost space with Vivaldi and used this to enable NEMO to optimize on minimizing the energy consumption.\\
+The simulations showed that NEMO performed really well in reducing the overall communication costs, and therefore minimizes the energy consumption, and also prevented overloaded nodes along the way.\\
+But the problem that remains are the bad predictions by Vivaldi and the very high estimation errors, which are most likely caused by non-constant environmental factors.\\
+These issues could be mitigated in future work by coordinating with the FIT/IoT-LAB admins to fully reserve a site, ensuring that no other users interfere with the experiments. Additionally, conducting experiments during nighttime, when there is minimal activity from office workers, would help reduce environmental disruptions. Future research could also explore the use of different boards with varying radio antennas, particularly those where transmission energy consumption significantly exceeds reception energy consumption. This would better emphasize the exponential increase in energy consumption and enable testing of alternative gateway algorithms.
+
+This is for the conclusion of my bachelor thesis so please give it a finishing touch
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+In this thesis, I investigated whether extending NEMO with an energy consumption cost space enables energy-efficient DAF operator placement for resource-constrained, large-scale, and geo-distributed topologies. To this end, I collected a representative energy consumption dataset using the FIT/IoT-LAB, constructed a two-dimensional energy consumption cost space using the Vivaldi algorithm, and adapted NEMO to optimize for minimizing energy consumption.
+
+The simulation results demonstrated that NEMO excelled in significantly reducing overall communication costs, thereby minimizing energy consumption, while simultaneously preventing node overload. These findings highlight NEMO's potential as a robust approach for optimizing energy efficiency in distributed systems.
+
+However, the study also revealed persistent challenges, particularly the poor predictions from Vivaldi and the high estimation errors, likely stemming from non-constant environmental factors. These inaccuracies underscore the need for further refinement in data collection and cost space prediction.
+
+Future work could address these challenges by collaborating with FIT/IoT-LAB administrators to fully reserve experimental sites, ensuring interference-free conditions. Conducting experiments during nighttime, when environmental disruptions such as office activity are minimal, would also enhance data reliability. Additionally, future research could incorporate alternative hardware, such as boards with different radio antenna configurations where transmission energy consumption significantly exceeds reception energy consumption. This would emphasize the exponential relationship between transmission distance and energy use, while also enabling experimentation with different gateway algorithms.
+
+In conclusion, while this thesis successfully demonstrated the viability of extending NEMO to optimize energy-efficient operator placement, it also laid the groundwork for further exploration and refinement in real-world experimental setups and optimization algorithms.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+In conclusion, while this thesis successfully demonstrated the viability of extending NEMO to optimize energy-efficient operator placement, it also highlighted the problems of gathering reliable energy consumption data, especially when working with different transmission power levels. Non the less it laid the groundwork for further exploration of real world experimental setups regarding the minimization of the energy consumption of resource-constrained distributed topologies. 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+In conclusion, while this thesis successfully demonstrated the feasibility of extending NEMO to optimize energy-efficient operator placement, it also underscored the challenges of obtaining reliable energy consumption data, particularly when dealing with varying transmission power levels. Nonetheless, it established a solid foundation for further exploration of real-world experimental setups aimed at minimizing energy consumption in resource-constrained, distributed topologies.
+
+4o

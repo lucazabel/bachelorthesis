@@ -1,0 +1,18 @@
+Du:
+However, the NEMO approach does not directly consider energy consumption as an important factor. But edge-devices are commonly deployed in stream-processing environments and usually have limited energy resources.
+This thesis addresses this issue directly by collecting representative energy consumption data, creating an energy consumption cost space, and extending NEMO by this energy consumption cost space. This enables NEMO to optimize on minimizing the energy consumption, while mainting its other upsides.\\
+
+change it so it maeks more sense 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here's a revised version of your text for better clarity and flow:
+
+The NEMO approach, while effective, does not explicitly account for energy consumption as a critical factor. However, edge devices are often deployed in stream-processing environments and typically operate with limited energy resources.
+
+This thesis addresses this limitation by collecting representative energy consumption data, constructing an energy consumption cost model, and integrating this model into NEMO. By extending NEMO to incorporate energy consumption considerations, it can optimize for reduced energy usage while retaining its existing advantages.
+
+Let me know if you'd like further adjustments!
+
+4o

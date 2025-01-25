@@ -1,0 +1,27 @@
+Du:
+In my experiment I use the consumed energy, when transmitting data between hosts, instead of the RTT, for the distance but due to it being easier to explain I will stick to RTT.
+
+wie kan ich das besser formulieren
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Hier ist eine klarere und präzisere Formulierung für Ihren Satz:
+
+"In meinem Experiment nutze ich die verbrauchte Energie beim Übertragen von Daten zwischen Hosts als Maß für die Distanz anstelle der RTT
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+In my experiment I use the consumed energy, when transmitting data between hosts, instead of the RTT, for the distance but due to it being easier to explain I will stick to RTT.
+
+whats a better way to write this
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here’s a more polished version of your sentence:
+
+"In my experiment, I use the energy consumed during data transmission between hosts as a measure of distance instead of RTT. However, for simplicity and clarity, I will refer to RTT in my explanations."
+
+4o

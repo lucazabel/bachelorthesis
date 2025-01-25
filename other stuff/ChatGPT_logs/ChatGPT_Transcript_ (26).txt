@@ -1,0 +1,186 @@
+Du:
+data = filtered_list[420:450]
+
+    plt.figure(figsize=(12, 10))
+
+    # Swarm Plot with Boxplot
+    sns.boxplot(data=data, whis=[0, 100], width=.6, showcaps=True)
+    sns.swarmplot(data=data, size=4, color="0", alpha=0.8)
+    plt.title("3 decibel-milliwatts Measurement")
+    plt.xlabel("Each sending of the data")
+    plt.ylabel("Power in Watts")
+    plt.xticks(ticks=range(len(data)), labels=range(1, len(data) + 1))
+
+    plt.savefig("plots/3dbm.png")
+    plt.show()
+
+I now did 15 plots which 30 measurements each.
+Now i want to make 1 plot where the x axis is the 15 powerlevels (-17, -12, -10, -7, -5 , -4, -3, -2, -1, 0.7, 1.3, 1.8, 2.3, 2.8, 3) and the y axis in the power in watts.   
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To create a single plot with 15 power levels on the x-axis and corresponding power measurements in watts on the y-axis, you will need to aggregate your data for each power level. Here's how you can approach the task:
+
+Steps to achieve this:
+
+Data Preparation:
+
+You should have 15 groups of 30 measurements, each corresponding to a specific power level.
+The power levels are given as: [-17, -12, -10, -7, -5, -4, -3, -2, -1, 0.7, 1.3, 1.8, 2.3, 2.8, 3].
+For each power level, you'll need to extract the corresponding 30 measurements.
+
+Plotting:
+
+You will use sns.boxplot() for the main boxplot and sns.swarmplot() to show individual measurements for each power level.
+Make sure to adjust the x-axis to represent the power levels.
+Example Code:
+
+Assuming filtered_list holds your data and that the measurements for each power level are already correctly indexed, here’s how you can create the plot:
+
+python
+Kopieren
+Bearbeiten
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+# Define the 15 power levels
+power_levels = [-17, -12, -10, -7, -5, -4, -3, -2, -1, 0.7, 1.3, 1.8, 2.3, 2.8, 3]
+
+# Assuming filtered_list is already defined and contains your measurements
+# You need to split this list into 15 groups, one for each power level
+
+# Create a list to store each group of measurements (30 values per group)
+data = []
+for i in range(15):
+    data.append(filtered_list[i*30:(i+1)*30])
+
+# Set the figure size
+plt.figure(figsize=(12, 10))
+
+# Create the boxplot with a swarm plot on top
+sns.boxplot(data=data, whis=[0, 100], width=.6, showcaps=True)
+sns.swarmplot(data=data, size=4, color="0", alpha=0.8)
+
+# Customize the plot
+plt.title("Power Levels vs. Power in Watts")
+plt.xlabel("Power Levels (dBm)")
+plt.ylabel("Power in Watts")
+plt.xticks(ticks=range(15), labels=power_levels)
+
+# Save the plot as a .png file
+plt.savefig("plots/power_levels_vs_watts.png")
+
+# Show the plot
+plt.show()
+
+Explanation of the Code:
+
+Data Aggregation:
+The data list is populated by slicing filtered_list into chunks of 30 measurements, one for each power level.
+
+Plotting:
+
+sns.boxplot(data=data): Creates the boxplot for each power level.
+sns.swarmplot(data=data): Overlays individual measurements as dots on the boxplot.
+
+Customizations:
+
+xticks: The x-axis is set to show the 15 power levels.
+The labels for the x-axis are assigned from the power_levels list.
+
+Saving and Showing the Plot:
+The plot is saved as "power_levels_vs_watts.png" in the "plots" folder, and then displayed with plt.show().
+
+This will give you a plot where each power level on the x-axis corresponds to a boxplot and swarm plot showing the power measurements in watts for that level.
+
+4o mini
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+data is a list of lists
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Thanks for the clarification! If data is a list of lists, where each sublist contains measurements corresponding to a specific power level, you can still follow the same general approach, but you'll need to ensure the structure of data is correctly handled for the seaborn plot functions.
+
+Let's assume that your data is structured as follows:
+
+python
+Kopieren
+Bearbeiten
+data = [
+    [measurements for power level -17],
+    [measurements for power level -12],
+    [measurements for power level -10],
+    ...
+    [measurements for power level 3]
+]
+
+
+Each element of data corresponds to the 30 measurements for a specific power level. The following steps will show how to create the plot:
+
+Updated Code:
+python
+Kopieren
+Bearbeiten
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Define the 15 power levels
+power_levels = [-17, -12, -10, -7, -5, -4, -3, -2, -1, 0.7, 1.3, 1.8, 2.3, 2.8, 3]
+
+# Assuming `data` is a list of 15 sublists, each with 30 measurements
+# Example: data = [[value1, value2, ..., value30], ..., [value1, value2, ..., value30]]
+
+# Set the figure size
+plt.figure(figsize=(12, 10))
+
+# Create the boxplot with a swarm plot on top
+sns.boxplot(data=data, whis=[0, 100], width=.6, showcaps=True)
+sns.swarmplot(data=data, size=4, color="0", alpha=0.8)
+
+# Customize the plot
+plt.title("Power Levels vs. Power in Watts")
+plt.xlabel("Power Levels (dBm)")
+plt.ylabel("Power in Watts")
+plt.xticks(ticks=range(15), labels=power_levels)
+
+# Save the plot as a .png file
+plt.savefig("plots/power_levels_vs_watts.png")
+
+# Show the plot
+plt.show()
+
+Breakdown of the Code:
+
+Data Structure:
+
+data is a list of 15 sublists, with each sublist containing 30 measurements.
+This structure works directly with seaborn's boxplot and swarmplot, as both can take a list of lists (or a 2D array) where each list corresponds to a separate category.
+
+Plotting:
+
+sns.boxplot(data=data): This generates a boxplot for each of the 15 power levels.
+sns.swarmplot(data=data): This overlays a swarm plot of the individual measurements on top of the boxplot.
+
+Customizations:
+
+xticks: The x-axis ticks are set to the power levels [-17, -12, -10, ..., 3].
+The labels for the x-axis correspond to the power levels, and the plot title and axis labels are also customized.
+
+Saving and Displaying:
+The plot is saved as "power_levels_vs_watts.png" and displayed.
+
+Expected Result:
+
+This code will create a plot where:
+
+The x-axis represents the 15 power levels (dBm).
+The y-axis represents the power values (in watts).
+Each power level will have a corresponding boxplot, and individual measurements will be shown as dots on top of the boxplots.
+
+Let me know if you need further adjustments!
+
+4o mini

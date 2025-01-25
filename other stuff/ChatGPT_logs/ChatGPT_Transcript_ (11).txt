@@ -1,0 +1,43 @@
+Du:
+A recent trend in stream processing is offloading the computation
+of decomposable aggregation functions (DAF) from cloud nodes to
+geo-distributed fog/edge devices to decrease latency and improve
+energy efficiency. However, deploying DAFs on low-end devices
+is challenging due to their volatility and limited resources. Additionally, in geo-distributed fog/edge environments, creating new
+operator instances on demand and replicating operators ubiquitously is restricted, posing challenges for achieving load balancing
+without overloading devices. Existing work predominantly focuses
+on cloud environments, overlooking DAF operator placement in
+resource-constrained and unreliable geo-distributed settings.
+This paper presents NEMO, a resource-aware optimization approach that determines the replication factor and placement of
+DAF operators in resource-constrained geo-distributed topologies.
+Leveraging Euclidean embeddings of network topologies and a set
+of heuristics, NEMO scales to millions of nodes and handles topological changes through adaptive re-placement and re-replication
+decisions. Compared to existing solutions, NEMO achieves up to
+6× lower latency and up to 15× reduction in communication cost,
+while preventing overloaded nodes. Moreover, NEMO re-optimizes
+placements in constant time, regardless of the topology size. As a
+result, it lays the foundation to efficiently process continuous data
+streams on large, heterogeneous, and geo-distributed topologies.
+
+
+what is here meant with replication factor?
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+In this context, the replication factor refers to the number of instances or copies of a Decomposable Aggregation Function (DAF) operator that are created and deployed across the geo-distributed fog/edge environment.
+
+By replicating the DAF operators, the system aims to:
+
+Improve Fault Tolerance: If one device becomes unavailable or unreliable, another instance of the operator can continue processing without interruption.
+Enhance Load Balancing: Spreading the workload across multiple replicated instances can prevent any single device from being overwhelmed.
+Reduce Latency and Communication Costs: By strategically placing replicated instances closer to the data sources or points of interest, the time and cost of transmitting data over the network can be minimized.
+
+However, determining the appropriate replication factor is a trade-off:
+
+A higher replication factor increases redundancy and resilience but consumes more resources (e.g., memory, processing power) on resource-constrained edge devices.
+A lower replication factor minimizes resource usage but risks overloading individual devices or creating bottlenecks if some nodes fail.
+
+In the case of NEMO, the system dynamically optimizes the replication factor based on the constraints and characteristics of the geo-distributed environment, ensuring efficient use of resources while maintaining performance and reliability.
+
+4o

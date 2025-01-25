@@ -1,0 +1,21 @@
+Du:
+Figure~\ref{fig:consumption_r_s_i} compares the power consumption in mW of the idle, transmit and receive state. Obvious is that the even at maximum transmission power level the power consumption in mW is still lower as the receiver consumption.\\
+Other experiments on the IoT-LAB M3 boards have shown different results, with a maximum power consumption of around 200 mW at the maximum power level. But these results were collected using Contiki as the operating system of the node. Contiki seems way less energy efficient as even the idle consumption exceeds the 110 mW whereas the idle consumption using the same resources except the operating system being Openlap are around 65 mW.\\
+Therefore I will use Openlap as the general consumption is lower and I want to minimize the total power consumption. 
+
+this is for my thesis and so please rewrite it which thesis-level english
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Certainly! Here's a refined version of your text, with a more formal tone suitable for a thesis:
+
+Figure~\ref{fig:consumption_r_s_i} illustrates the power consumption (in milliwatts) across idle, transmit, and receive states. Notably, even at the maximum transmission power level, the power consumption remains lower than that of the receive state.
+
+Additional experiments conducted on the IoT-LAB M3 boards have yielded differing results, with a maximum power consumption of approximately 200 mW at peak power levels. These findings were observed while utilizing Contiki as the operating system. Contiki appears to be significantly less energy-efficient, with idle power consumption exceeding 110 mW. In contrast, when using identical hardware resources but running Openlap as the operating system, the idle consumption is reduced to approximately 65 mW.
+
+Given the lower overall power consumption observed with Openlap, I have chosen to adopt this operating system to minimize total power consumption in my experiments.
+
+This revision adopts a more formal tone, improves clarity, and enhances the flow, aligning with the expectations of thesis-level writing.
+
+4o

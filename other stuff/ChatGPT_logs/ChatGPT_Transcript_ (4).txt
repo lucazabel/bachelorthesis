@@ -1,0 +1,98 @@
+Du:
+arr = np.loadtxt("../data_topology_2/energy_consumption_tp2_mW.csv", delimiter=",") 
+
+scatter plot this NxN array 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To scatter plot the NxN array loaded from the CSV file, we will perform the following steps:
+
+Load the data using np.loadtxt.
+Create a scatter plot using matplotlib.
+
+Here's a Python code snippet to do this:
+
+python
+Kopieren
+Bearbeiten
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load the NxN array from the CSV file
+arr = np.loadtxt("../data_topology_2/energy_consumption_tp2_mW.csv", delimiter=",")
+
+# Determine the dimensions of the array
+N = arr.shape[0]
+
+# Create x and y coordinates for the scatter plot
+x, y = np.meshgrid(range(N), range(N))
+
+# Flatten the arrays for plotting
+x_flat = x.flatten()
+y_flat = y.flatten()
+values = arr.flatten()
+
+# Create the scatter plot
+plt.figure(figsize=(8, 6))
+scatter = plt.scatter(x_flat, y_flat, c=values, cmap='viridis')
+
+# Add color bar to indicate value
+plt.colorbar(scatter, label='Energy Consumption (mW)')
+
+# Label the plot
+plt.xlabel('Index X')
+plt.ylabel('Index Y')
+plt.title('Scatter Plot of Energy Consumption')
+
+# Show the plot
+plt.show()
+
+
+This code will generate a scatter plot where the color of each point represents the corresponding value from the array. The plot provides a visual representation of the energy consumption values in the NxN grid.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+ich möchte nicht den Index auf den axen haben sondern auf der Y die anzahl der nodes mit dem gleichen wert haben und auf der x achse achse den Wert in milliWatt 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Um eine Verteilung der Werte im Array darzustellen, bei der die X-Achse die Werte in Milliwatt zeigt und die Y-Achse die Anzahl der Knoten mit demselben Wert, kannst du ein Histogramm verwenden. Ein Histogramm eignet sich gut für diese Art der Visualisierung.
+
+Hier ist der entsprechende Python-Code:
+
+python
+Kopieren
+Bearbeiten
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Laden des Arrays aus der CSV-Datei
+arr = np.loadtxt("../data_topology_2/energy_consumption_tp2_mW.csv", delimiter=",")
+
+# Das Array zu einem eindimensionalen Array umformen
+values = arr.flatten()
+
+# Erstellen des Histogramms
+plt.figure(figsize=(8, 6))
+plt.hist(values, bins=30, color='blue', edgecolor='black')
+
+# Achsentitel und Diagrammtitel hinzufügen
+plt.xlabel('Energieverbrauch (mW)')
+plt.ylabel('Anzahl der Knoten')
+plt.title('Verteilung des Energieverbrauchs')
+
+# Das Histogramm anzeigen
+plt.show()
+
+Erklärung:
+flatten(): Wandelt das 2D-Array in ein 1D-Array um.
+plt.hist(): Erstellt ein Histogramm mit den Werten im Array.
+bins=30: Bestimmt die Anzahl der Intervalle im Histogramm. Du kannst diesen Wert anpassen, um die Auflösung des Histogramms zu ändern.
+color und edgecolor: Legen die Farben für die Balken und ihre Ränder fest.
+
+Dieses Diagramm zeigt dir, wie häufig verschiedene Werte des Energieverbrauchs auftreten, was eine gute Übersicht über die Verteilung der Werte im Array bietet.
+
+4o

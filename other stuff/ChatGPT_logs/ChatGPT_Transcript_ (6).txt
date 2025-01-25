@@ -1,0 +1,409 @@
+Du:
+4 The Specific Solution Approach
+4.0.1 Topology Setup
+As mentioned in Section 2.2, FIT/IoT-Lab provides access to eight different sites.
+While the Grenoble site has the largest number of M3 boards, which are essential
+for this experiment due to their wireless data transmission capabilities, I chose
+to use the Lille site. This decision was driven by the lower traffic at Lille and
+the broader distribution of nodes throughout the building, which provided a more
+suitable environment for the experiment.
+In this setup, I utilized a total of 83 nodes, strategically deployed across the topol-
+ogy to ensure comprehensive coverage and optimal data collection. I decided to
+spread the nodes as far as possible but also tried to create clusters, where each
+node is close to each other.
+Figure 2: The Lille topology with highlighted deployment areas in blue and the
+selected nodes in red.
+11
+(a) Side-View of the topology with the distance
+in Meters
+(b) Top-View of the topology with
+the distance in Meters
+Figure 3: The Lille topology is shown from two different perspectives to better
+visualize the distances between nodes in meters. Additionally, a color
+bar is included to indicate the floor on which each node is located
+4.0.2 Sender
+To gather the data I developed an algorithm for the sender, referred to as sender
+firmware 1.
+This firmware first of all enters a phase locked loop (PLL), to synchronize the in-
+ternal oscillator to a reference signal to stabilize the frequency and thereby enables
+accurate communication.
+Once synchronization is achieved, the radio chip transitions to the idle state, as
+the transmission power of the antenna can only be changed in this or the sleep
+state. The algorithm then modifies the transmission power. Then it proceeds to
+call the broadcast data() function 2. and proceeds to broadcast 30 packages 2.
+Then it enters the idle state again and switches to the next transmission power
+before repeating this process until all transmission powers are covered.
+12
+The antenna has a total of 15 output powers ranging from −17 decibel-milliwatts
+(dBm) up to 3dBm. Decibel-milliwatt is a commonly used unit to express power
+levels using a logarithmic decibel scale respective to 1 milliwatt (mW).
+All 15 power levels and their respective consumption in mw here: 5
+Algorithm 1: sender firmware
+initiate hardware // sets radio channel & turns LEDs off
+enter P LL ON mode // for 5 seconds
+enter idle mode // for 5 seconds
+power levels ← [−17, −12, −10, ..., 2.3, 2.8, 3]
+foreach power in power levels do
+set T X power ← power // set transmission power
+call broadcast data() // call broadcast function
+if platf orm state ! = Idle then
+log error(”wrong state”)
+Algorithm 2: broadcast data()
+data ← ”98, 106...24” // buffer with data
+prepare packet
+for i ← 0 to 30 do
+status ← phy tx now // sends packet and returns status
+if status ! = SU CCESS then
+log error(”failed broadcast”)
+i = i + 1
+4.0.3 Receiver
+The receiver algorithm 3 initiates by setting the receiver sensitivity to the lowest
+value which equals −101dBm. Then it calls the prebuilt function,
+mac csma data received, which operates in the background and triggers whenever
+a packet is received.
+After receiving a packet, the firmware logs the information in following format:
+timestamp, receiver, sender, length of packet, RSSI, transmission power, data.
+4.0.4 Transmission Power Matrix
+After collecting the data in the form of log files from the FIT/IoT-Lab, the next
+step involved parsing these files to extract relevant information regarding the an-
+13
+Algorithm 3: receiver firmware
+set RX threshold // sets the threshold to -101dBm
+mac csma data received()
+Algorithm 4: mac csma data received()
+// this function is automatically triggered when a packet is received
+input: src addr, *data, length, rssi
+log(src addr, length, rssi, TX power, data)
+tenna transmission power.
+For the purposes of this analysis, the most important information extracted from
+the logs 4.0.3 are the sender (i), the receiver (j) and the transmission power of
+the antenna (i, j). The remaining fields such as timestamp, length of the packet,
+RSSI and the data were not needed for the construction of the transmission power
+matrix.
+The extracted data was then organized into a structured format, specifically a
+N × N matrix. This matrix represents the transmission power of the antenna
+between nodes in the network, where each element (i, j) corresponds to the trans-
+mission power required for the antenna to reach node j from i.
+This results in a matrix like this one:
+node id 0 1 2 3 4
+
+
+
+
+
+
+
+
+
+
+0 nan −17 −5 3 nan
+1 −17 nan −10 −12 nan
+2 −3 −12 nan 2.3 3
+3 nan −2 −17 nan −12
+4 3 −1 −7 −12 nan
+Table 1: Example of a transmission power matrix between all the nodes in the
+topology
+This matrix has 3 distinct cases:
+1. sender = receiver (i = j)
+When the sender and the receiver are the same node, no transmission is
+required and consequently ”nan” is recorded at (i, j) in the matrix.
+14
+This is observed in the example matrix 1 at positions (0, 0), (1, 1), ..., (4, 4),
+indicating no transmission occurs when the sender and receiver are identical.
+2. sender reaches receiver with transmission power x
+If the sender (i) successfully reaches the receiver (j) with a specific trans-
+mission power x, the value x is documented at position (i, j) in the matrix.
+For example, in the matrix, (0, 1) is noted as −17, (0, 2) as -5 and so forth,
+indicating the transmission power to reach node j from node i.
+3. sender cannot reach the receiver
+In scenarios where the sender (i) is unable to reach the receiver (j) with any
+transmission power, nan is written at (i, j) in the matrix.
+This notes an absence of a direct transmission between those nodes, as in
+the matrix at the positions (0, 4), (1, 4), (3, 0).
+4.0.5 Distance Matrix
+Then I extracted the coordinates of the nodes from the FIT/IoT-Lab and calcu-
+lated the distances between each pair of nodes. In this example, two-dimensional
+(2D) coordinates were used for simplicity, although the actual network topology
+utilized three-dimensional coordinates.
+To determine the distances, I calculated the Euclidean distance between each pair
+of nodes using the following formula:
+dist(i, j) =
+q
+(ix − jx)2 + (iy − jy)2
+Where ix and iy are the coordinates of the sender node (i) and jx and jy are the
+coordinates of the receiver node (j).
+The following table is an example of a distance matrix in meters between all nodes
+in the topology:
+With this calculation I get the straight-line distance between any two nodes in
+the 2D plane, providing the necessary input for constructing the distance matrix.
+This matrix serves as a critical component for determining the gateway nodes
+within the network.
+For instance, a gateway node enables node 0 to communicate with node 4 even
+when a direct transmission is not possible.
+4.0.6 Gateway Matrix
+The gateway nodes are determined by minimizing the distance from the receiver
+of the signal to the gateway node, while simultaneously maximizing the distance
+from the gateway node to the sender. Additionally, the algorithm minimizes the
+15
+node id 0 1 2 3 4
+
+
+
+
+
+
+
+
+
+
+0 0 2 4 6 5
+1 2 0 3 5 1
+2 4 3 0 7 3
+3 6 5 7 0 6
+4 5 1 3 6 0
+Table 2: Example of a distance matrix in meters between all the nodes in the
+topology
+number of hops, prioritizing nodes that are further away but have a direct connec-
+tion to the sender over those that are closer but require intermediate hops.
+The idea for this approach is based on the energy consumption of the transmission
+power levels. Even at the maximum transmission power, the energy consumption
+is still marginally lower than receiving a packet.
+Given this, a direct transmission is generally more energy-efficient than one in-
+volving intermediate nodes, as receiving costs more energy than transmitting with
+the highest power level.
+Additionally, the lowest transmission power level consumes approximately 88mW ,
+while the highest level consumes around 104mW . So even two transmission with
+the lowest power will consume more energy than one with the maximum power.
+In the example provided, the algorithm iterates over the transmission power ma-
+trix. When it encounters a ”nan” value at (i, j) where i̸ = j, it searches for the
+closest node to the receiver.
+For instance, to establish a connection from node 0 to node 4, the algorithm iden-
+tifies node 1 as the closest node to node 4 with a distance of 1m. It then checks if
+node 1 has a connection to node 4 by examining the value at (1, 4) in the trans-
+mission power matrix 1. Since (1, 4) = nan, the algorithm proceeds to the next
+closest node, which is node 2, at a distance of 3m. Finding a valid connection at
+(2, 4) = 3, the algorithm confirms a transmission path from node 2 to node 4 with
+power 3.
+Next, the algorithm checks the connection from the sender node 0 to the gateway
+node 2. If (0, 2)̸ = nan, the algorithm establishes the path 0 −→ 2 −→ 4. Else
+it would continue the search for a gateway node. If the algorithm can not find a
+gateway node, the algorithm is repeated at the very end.
+The path 0 −→ 2 −→ 4, requires two transmissions: from node 0 to node 2 with
+power (0, 2) = −5, and from node 2 to node 4 with power (2, 4) = 3.
+The resulting matrix, which contains these gateway paths, is presented below:
+16
+node id 0 1 2 3 4
+
+
+
+
+
+
+
+
+
+
+0 nan −17 −5 3 (−5, 3)
+1 −17 nan −10 −12 (−10, 3)
+2 −3 −12 nan 2.3 3
+3 (−17, −10) −2 −17 nan −12
+4 3 −1 −7 −12 nan
+Table 3: Example of a transmission power matrix between all the nodes in the
+topology with gateways for not direct reachable nodes
+This matrix provides a representation of the transmission paths, including the use
+of gateway nodes to facilitate communication between nodes that are not directly
+connected.
+4.0.7 Transmission Power to Power Consumption in Milliwatts
+With the assurance that each node is reachable, the next step is to calculate the
+actual power consumption in watts.
+As I have already mentioned in 2.2.1, the M3-board is able to measure its consump-
+tion over the span of the experiment and logs the data in an OML-file. Therefore,
+I had to configure a monitoring profile that logs the power consumption data ev-
+ery 560μs. Specifically, this profile averages four measurements, each taken every
+140μs, resulting in an entry every 560μs. This configuration is above the mini-
+mum 500μs threshold of the board and reduces the number of outliers by taking
+an average over multiple measurements.
+The oml-file has following format:
+experiment duration, 1, entry, timestamp s, timestamp μtexts, power, voltage, current
+Using the expirement duration, I identified the idle power consumption of each
+node. This allowed me to filter the power column in the OML files for values
+exceeding the idle consumption. Additionally, the experiment duration enabled
+me to group the power consumption values according to each transmission power
+level, as there is a 5-second timeout between each power level. A similar approach
+was applied to the receiving power.
+17
+4.0.8 Power Consumption Matrix
+After obtaining the respective power consumption for each transmission power
+level, I can calculate the total power consumption for transmissions between each
+pair of nodes. This involves converting the transmission power levels to their cor-
+responding power consumption in milliwatts, as outlined in Section 4.0.7. If a
+gateway node is involved, the total power consumption is determined by summing
+the power consumption of the transmission power levels and the receiver power
+consumption for each transmission step.
+If there is ”nan”, no transmission has to be done and therefore the power con-
+sumption is 0.
+This results in a matrix like this:
+node id 0 1 2 3 4
+
+
+
+
+
+
+
+
+
+
+0 0 88.7 95.1 104.8 199.9
+1 88.7 0 91.6 90.2 196.4
+2 97.3 90.2 0 103.2 104.8
+3 180.3 97.3 88.7 0 90.2
+4 104.8 97.3 93.3 90.2 0
+Table 4: Example of a power consumption matrix in mW between all the nodes of
+the topology
+4.0.9 Vivaldi Coordinates
+This power consumption matrix can now be utilized by Vivaldi 2.3.1 to predict
+two-dimensional coordinates. By analyzing the power consumption data, Vivaldi
+can infer the distances between nodes, thereby estimating their relative positions
+within the network topology.
+As previously mentioned in Section 2.3.1, Vivaldi offers several configuration op-
+tions to modify the algorithm. For this experiment, I chose to incorporate height
+vectors, as they enhance the accuracy of the coordinate predictions. Furthermore,
+I restricted the dimensionality to two, aligning with the requirements of NEMO,
+which operates within a two-dimensional space.
+To apply the Vivaldi algorithm to my dataset, I employed the Simulator for Decen-
+tralized Network Coordinate Algorithms (NCSim). This simulation tool enabled
+18
+
+This is my specific solution approach. 
+Now I want to write:
+
+5 Experimental (and/or Analytical)
+Evaluation
+5.1 Experimental Setup
+... should include the following:
+• define experimental data and workload(s),
+• discussion about the selection and interpretation of the evaluation metrics,
+• discussion about the computing environment, including hardware, software,
+tools.
+
+Please do that for me. Make sure to keep an acedamic tone  
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Here's a draft of the new section based on your requirements:
+
+Experimental Evaluation
+5 Experimental (and/or Analytical) Evaluation
+5.1 Experimental Setup
+
+In this section, I outline the details of the experimental setup used to validate the proposed solution, including the definition of experimental data and workloads, the evaluation metrics employed, and a comprehensive description of the computing environment.
+
+5.1.1 Experimental Data and Workloads
+
+The experimental data was collected from the FIT/IoT-Lab Lille site, utilizing 83 nodes as outlined in Section 4.0.1. Each node was equipped with M3 boards that are capable of wireless data transmission. The data set consists of logs capturing transmission power levels, packet reception rates, and power consumption values for each node in the topology.
+
+The workload for the experiment involved broadcasting packets at varying transmission power levels across the network. Specifically, each node transmitted 30 packets per power level, cycling through all 15 predefined power levels from -17 dBm to 3 dBm. This workload was designed to emulate real-world network traffic conditions while capturing sufficient data to analyze the network's performance and energy efficiency under different transmission power settings.
+
+5.1.2 Evaluation Metrics
+
+To thoroughly evaluate the network's performance and the energy efficiency of the proposed solution, several key metrics were selected:
+
+Packet Delivery Ratio (PDR): The ratio of successfully received packets to the total number of packets sent. This metric indicates the reliability of the network.
+
+Transmission Power Levels: The power levels required for successful communication between nodes, analyzed in the context of the distance between nodes and the presence of obstacles.
+
+Power Consumption: The energy consumed during transmission at various power levels, measured in milliwatts (mW). This metric is critical to understanding the energy efficiency of the network.
+
+Latency: The time taken for a packet to travel from the sender to the receiver, which helps assess the network's responsiveness.
+
+These metrics were chosen to provide a comprehensive assessment of both the functional performance and the energy efficiency of the network, aligning with the primary goals of the experiment.
+
+5.1.3 Computing Environment
+
+The experimental evaluation was conducted using the FIT/IoT-Lab Lille site's infrastructure, which provides a controlled and scalable environment for IoT experimentation. The specific details of the computing environment are as follows:
+
+Hardware: Each node was equipped with an M3 board, featuring an ARM Cortex-M3 microcontroller, 64 kB of RAM, and a 2.4 GHz IEEE 802.15.4 radio transceiver. The deployment across the Lille site was selected to optimize node distribution and minimize interference.
+
+Software: The firmware for both the sender and receiver nodes was developed using C and compiled with the GCC toolchain. The sender firmware included algorithms for packet transmission and power level adjustment, while the receiver firmware focused on packet reception and logging.
+
+Tools: Data collection and analysis were performed using the following tools:
+
+OML (Orbit Measurement Framework): Used for logging power consumption data, configured to sample every 560 μs.
+
+NCSim (Network Coordinate Simulator): Employed for simulating the Vivaldi algorithm to predict node coordinates based on power consumption data.
+
+MATLAB: Utilized for parsing log files, constructing transmission power and distance matrices, and performing statistical analysis on the collected data.
+
+By leveraging this computing environment, the experimental setup was able to provide robust data for evaluating the network's performance and energy efficiency under various configurations. This setup ensures that the findings are both reproducible and reflective of real-world conditions.
+
+
+
+
+Does this align with your expectations?
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+{ "comments": [ { "pattern": "The data set consists of logs capturing transmission power levels, packet reception rates, and power consumption values for each node in the topology\.", "comment": "Consider clarifying
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+packet reception rates, and power consumption values for each node in the topology. 
+
+what is meant by that
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Kommentare und Vorschläge wurden hinzugefügt, um die Qualität des Textes zu verbessern.
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+The data set consists of logs capturing transmission power levels, packet reception rates, and power consumption values for each node in the topology.
+
+no what is meant by this sentence and where did you get the informations. what are packet reception rates 
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Kommentare und Vorschläge wurden hinzugefügt, um die Qualität des Textes zu verbessern.
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+nop explain me here
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+In the sentence:
+
+"The data set consists of logs capturing transmission power levels, packet reception rates, and power consumption values for each node in the topology."
+
+Explanation:
+
+Transmission Power Levels: These refer to the different output power settings used by the nodes to transmit data. In your setup, you varied the transmission power from -17 dBm to 3 dBm to assess how power levels affect communication.
+
+Packet Reception Rates: This term typically refers to the number or percentage of packets successfully received by a node relative to the total number of packets sent. It helps gauge the reliability of the network—higher reception rates indicate more successful transmissions.
+
+Power Consumption Values: These are the measurements of how much power each node consumes during transmissions at various power levels. This data is crucial for understanding the energy efficiency of the network.
+
+Source of Information:
+
+The details mentioned in the sentence were likely derived from the experiment you conducted using the FIT/IoT-Lab Lille site's infrastructure. Specifically, the M3 boards logged data such as the power level used during transmission, the success rate of packet receptions, and the power consumed, as indicated in your description of the sender and receiver algorithms and the use of OML for logging.
+
+Context of "Packet Reception Rates":
+
+In this context, "packet reception rates" is an evaluation metric that would be calculated from the log files. These logs would contain entries for each packet transmission attempt, noting whether the packet was successfully received or not. The reception rate would then be the ratio of successful receptions to total transmissions, providing insight into the network's performance at different power levels and configurations.
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+json
+Kopieren
+Bearbeiten
+{
+  "comments": [
+    {
+      "pattern": "The experimental data was collected from the FIT/IoT-Lab Lille site, utilizing 83 nodes as outlined in Section 4\\.0\\.1\\.",
+      "comment": "Consider clarifying or providing a brief summary of the details mentioned in Section 4.0.1 to ensure this statement is self-contained for readers who may not have immediate access to that section."
+    },
+    {
+      "pattern": "Each

@@ -1,0 +1,1 @@
+Just install python 3.10 and the requirements.txt and all the functions can be used.

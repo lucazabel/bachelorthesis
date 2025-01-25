@@ -1,0 +1,442 @@
+Du:
+receiver_plot.py
+
+import csv
+import matplotlib.pyplot as plt
+import numpy as np
+
+with open("omls/m3_25_receiver.oml", "r", encoding="utf-8") as file:
+    content = list(csv.reader(file, delimiter='\t'))
+
+    counter = 0
+    energy_list = []
+    for line in content:
+        if counter > 9 and float(line[0]) > 36.0:
+            if float(line[5]) > 0.13:
+                energy_list.append(line)
+        counter += 1
+
+    output_list = []
+    i = 0
+    while i < len(energy_list)-1:
+        temp_list = [[int(energy_list[i][2]), float(energy_list[i][5])]]
+        timestamp_curr = float(energy_list[i][0])
+        for j in range(len(energy_list)-i-1):
+            timestamp_next = float(energy_list[i+j+1][0])
+            if timestamp_next < timestamp_curr + 2.5:
+                temp_list.append([int(energy_list[i + j + 1][2]) ,float(energy_list[i + j + 1][5])])
+            else:
+                break
+        output_list.append(temp_list)
+        i+=len(temp_list)
+
+    line_list = []
+    for i in range(15):
+        start_idx = output_list[i*30][0][0]-1
+        stop_idx = output_list[(i+1)*30-1][0][0]+1
+        line_list.append([start_idx, stop_idx])
+
+    power_list = []
+    average_list = []
+    for start_idx, stop_idx in line_list:
+        temp_list = []
+        for idx, line in enumerate(content):
+            if start_idx <= idx < stop_idx:
+                temp_list.append(float(line[5]))  # Collect lines in the range
+        power_list.append(temp_list)
+        average_list.append(np.average(temp_list))
+
+    power_levels = [-17, -12, -10, -7, -5, -4, -3, -2, -1, 0.7, 1.3, 1.8, 2.3, 2.8, 3]
+    plt.plot(power_levels, average_list, marker='o', linestyle='-')
+    plt.xlabel("Antenna power in dBm (decibel-milliwatts)")
+    plt.ylabel("Power in Watts")
+    plt.title("receiver power consumption in Watts")
+    plt.grid(True)
+    plt.show()
+
+sender_plot.py
+
+import csv
+
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+with open("omls/m3_47.oml", "r", encoding="utf-8") as file:
+    content = list(csv.reader(file, delimiter='\t'))
+
+    counter = 0
+    energy_list = []
+    for line in content:
+        if counter > 9 and float(line[0])>36.0:
+            if float(line[5]) > 0.07:
+                energy_list.append(line)
+        counter += 1
+
+    output_list = []
+    i = 0
+    while i < len(energy_list) - 1:
+        temp_list = [float(energy_list[i][5])]
+        # temp_list = [[int(energy_list[i][2]), float(energy_list[i][5])]]
+        timestamp_curr = float(energy_list[i][3]) + (float(energy_list[i][4]) / 1000000)
+        for j in range(len(energy_list) - i - 1):
+            timestamp_next = float(energy_list[i + j + 1][3]) + (float(energy_list[i + j + 1][4]) / 1000000)
+            if timestamp_next < timestamp_curr + 0.2:
+                temp_list.append(float(energy_list[i + j + 1][5]))
+                # temp_list.append([int(energy_list[i + j + 1][2]) ,float(energy_list[i + j + 1][5])])
+            else:
+                break
+        output_list.append(temp_list)
+        i += len(temp_list)
+
+    filtered_list = []
+    for sublist in output_list:
+        if (sum(sublist) / len(sublist)) >= 0.08:
+            filtered_list.append(sublist)
+
+    power_levels = [-17, -12, -10, -7, -5, -4, -3, -2, -1, 0.7, 1.3, 1.8, 2.3, 2.8, 3]
+    consumption_per_power = [] #consumption per powerlevel
+    for i in range(15):
+        temp = filtered_list[i * 30:(i + 1) * 30]
+        consumption_per_power.append([item for sublist in temp for item in sublist])
+
+    average_consumption_per_power = [sum(data) / len(data) for data in consumption_per_power]
+
+    plt.plot(power_levels, average_consumption_per_power, marker='o', label='Average Power Consumption')
+
+    # Customize the plot
+    plt.title("Power Levels in decibel-milliwatts compared to Power in Watts")
+    plt.xlabel("Antenna power in dBm (decibel-milliwatts)")
+    plt.ylabel("Power in Watts")
+    plt.show()
+
+i wanna combine these two in 1 plot. how can i do that
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To combine the two plots from receiver_plot.py and sender_plot.py into one figure, you can import both scripts' logic and integrate their results into a single matplotlib plot. Here's how to do it:
+
+Steps:
+Merge the Data Processing:
+Extract the power_levels and average power values (average_list for receiver, average_consumption_per_power for sender) from both scripts.
+Plot on the Same Axes:
+Use plt.plot() for both datasets, with distinct markers or line styles for clarity.
+Add a legend to differentiate between receiver and sender data.
+
+Here’s the combined script:
+
+python
+Kopieren
+Bearbeiten
+import csv
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Receiver data processing
+with open("omls/m3_25_receiver.oml", "r", encoding="utf-8") as file:
+    content = list(csv.reader(file, delimiter='\t'))
+    counter = 0
+    energy_list = []
+    for line in content:
+        if counter > 9 and float(line[0]) > 36.0:
+            if float(line[5]) > 0.13:
+                energy_list.append(line)
+        counter += 1
+
+    output_list = []
+    i = 0
+    while i < len(energy_list) - 1:
+        temp_list = [[int(energy_list[i][2]), float(energy_list[i][5])]]
+        timestamp_curr = float(energy_list[i][0])
+        for j in range(len(energy_list) - i - 1):
+            timestamp_next = float(energy_list[i + j + 1][0])
+            if timestamp_next < timestamp_curr + 2.5:
+                temp_list.append([int(energy_list[i + j + 1][2]), float(energy_list[i + j + 1][5])])
+            else:
+                break
+        output_list.append(temp_list)
+        i += len(temp_list)
+
+    line_list = []
+    for i in range(15):
+        start_idx = output_list[i * 30][0][0] - 1
+        stop_idx = output_list[(i + 1) * 30 - 1][0][0] + 1
+        line_list.append([start_idx, stop_idx])
+
+    power_list = []
+    average_list = []
+    for start_idx, stop_idx in line_list:
+        temp_list = []
+        for idx, line in enumerate(content):
+            if start_idx <= idx < stop_idx:
+                temp_list.append(float(line[5]))  # Collect lines in the range
+        power_list.append(temp_list)
+        average_list.append(np.average(temp_list))
+
+# Sender data processing
+with open("omls/m3_47.oml", "r", encoding="utf-8") as file:
+    content = list(csv.reader(file, delimiter='\t'))
+    counter = 0
+    energy_list = []
+    for line in content:
+        if counter > 9 and float(line[0]) > 36.0:
+            if float(line[5]) > 0.07:
+                energy_list.append(line)
+        counter += 1
+
+    output_list = []
+    i = 0
+    while i < len(energy_list) - 1:
+        temp_list = [float(energy_list[i][5])]
+        timestamp_curr = float(energy_list[i][3]) + (float(energy_list[i][4]) / 1000000)
+        for j in range(len(energy_list) - i - 1):
+            timestamp_next = float(energy_list[i + j + 1][3]) + (float(energy_list[i + j + 1][4]) / 1000000)
+            if timestamp_next < timestamp_curr + 0.2:
+                temp_list.append(float(energy_list[i + j + 1][5]))
+            else:
+                break
+        output_list.append(temp_list)
+        i += len(temp_list)
+
+    filtered_list = []
+    for sublist in output_list:
+        if (sum(sublist) / len(sublist)) >= 0.08:
+            filtered_list.append(sublist)
+
+    consumption_per_power = []  # consumption per power level
+    for i in range(15):
+        temp = filtered_list[i * 30:(i + 1) * 30]
+        consumption_per_power.append([item for sublist in temp for item in sublist])
+
+    average_consumption_per_power = [sum(data) / len(data) for data in consumption_per_power]
+
+# Power levels (common to both)
+power_levels = [-17, -12, -10, -7, -5, -4, -3, -2, -1, 0.7, 1.3, 1.8, 2.3, 2.8, 3]
+
+# Plotting
+plt.plot(power_levels, average_list, marker='o', linestyle='-', label='Receiver Power Consumption')
+plt.plot(power_levels, average_consumption_per_power, marker='s', linestyle='--', label='Sender Power Consumption')
+
+# Customize plot
+plt.title("Power Levels in dBm vs Power in Watts")
+plt.xlabel("Antenna Power in dBm (decibel-milliwatts)")
+plt.ylabel("Power in Watts")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+Key Changes:
+
+Receiver and Sender Data:
+
+The respective data processing sections are kept independent.
+
+Unified Plot:
+
+Both average_list (receiver) and average_consumption_per_power (sender) are plotted on the same axes.
+Different markers and line styles are used for distinction.
+
+Legend:
+
+Labels (Receiver Power Consumption, Sender Power Consumption) are added for clarity.
+
+This script assumes both .oml files are in the specified directory and formatted consistently.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+consumption_sender = [] #consumption per powerlevel
+    for i in range(15):
+        temp = filtered_list[i * 30:(i + 1) * 30]
+        consumption_sender.append([item for sublist in temp for item in sublist])
+
+    average_consumption_sender = [sum(data) / len(data) for data in consumption_sender]
+
+how to make that more effiecient woth np avegrage
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+You can make the computation of average_consumption_sender more efficient by directly leveraging numpy's array slicing and averaging capabilities. Here's how you can do it:
+
+Optimized Code
+python
+Kopieren
+Bearbeiten
+import numpy as np
+
+# Assuming `filtered_list` is a list of lists where each sublist contains power values
+filtered_array = np.array([item for sublist in filtered_list for item in sublist])
+
+# Reshape the array into a matrix where each row corresponds to a power level group (30 entries per group)
+reshaped_array = filtered_array.reshape(15, 30)
+
+# Calculate the average for each group (row)
+average_consumption_sender = np.mean(reshaped_array, axis=1)
+
+Explanation
+
+Flatten the filtered_list:
+
+Combine all sublists in filtered_list into a single list using a list comprehension.
+Convert this list into a NumPy array (filtered_array).
+
+Reshape the Data:
+
+Use .reshape(15, 30) to create a 2D array where each row represents a group of 30 entries corresponding to a power level.
+
+Compute Averages:
+
+Use np.mean(reshaped_array, axis=1) to calculate the average of each row (group).
+
+This approach avoids creating nested lists (consumption_sender) and directly computes the averages, reducing memory usage and increasing efficiency.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+plt.plot(power_levels, average_consumption_receiver, marker='o', linestyle='-', label='Receiver Power Consumption')
+plt.plot(power_levels, average_consumption_sender, marker='o', linestyle='-', label='Sender Power Consumption')
+plt.plot(power_levels, average_consumption_idle, marker='o', linestyle='-', label='Sender Power Consumption')
+
+
+# Customize plot
+plt.title("Power Levels in dBm vs Power in Watts")
+plt.xlabel("Antenna Power in dBm (decibel-milliwatts)")
+plt.ylabel("Power consumption in Watts")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+i want the legend to be next to the plot
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To position the legend next to the plot, you can use the bbox_to_anchor parameter in plt.legend() to place it outside the plot area. Here's how you can modify your code:
+
+Updated Code
+python
+Kopieren
+Bearbeiten
+plt.plot(power_levels, average_consumption_receiver, marker='o', linestyle='-', label='Receiver Power Consumption')
+plt.plot(power_levels, average_consumption_sender, marker='o', linestyle='-', label='Sender Power Consumption')
+plt.plot(power_levels, average_consumption_idle, marker='o', linestyle='-', label='Idle Power Consumption')  # Updated label
+
+# Customize plot
+plt.title("Power Levels in dBm vs Power in Watts")
+plt.xlabel("Antenna Power in dBm (decibel-milliwatts)")
+plt.ylabel("Power consumption in Watts")
+
+# Position legend outside the plot
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+plt.grid(True)
+
+# Adjust layout to fit the legend
+plt.tight_layout(rect=[0, 0, 0.85, 1])  # Leave space for the legend
+plt.show()
+
+Key Adjustments
+
+bbox_to_anchor:
+
+loc='center left' places the legend to the right of the plot vertically centered.
+bbox_to_anchor=(1, 0.5) specifies the legend's position relative to the plot (1 unit to the right, at 50% height).
+
+plt.tight_layout:
+
+Adjusts the layout to prevent overlap between the legend and the plot.
+
+Rect Parameter:
+
+The rect=[0, 0, 0.85, 1] in tight_layout leaves 15% of the figure width for the legend, ensuring everything fits neatly.
+
+You can adjust the bbox_to_anchor values for fine-tuning the legend's position.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+now it gets cut off. how can i change that
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+If the legend is getting cut off, it’s likely because the figure size needs to be adjusted to accommodate the extra space for the legend. You can fix this by explicitly increasing the figure size or adjusting the layout further. Here’s how:
+
+Updated Code
+python
+Kopieren
+Bearbeiten
+import matplotlib.pyplot as plt
+
+# Create the figure with adjusted size
+plt.figure(figsize=(10, 6))  # Adjust width and height as needed
+
+# Plot the data
+plt.plot(power_levels, average_consumption_receiver, marker='o', linestyle='-', label='Receiver Power Consumption')
+plt.plot(power_levels, average_consumption_sender, marker='o', linestyle='-', label='Sender Power Consumption')
+plt.plot(power_levels, average_consumption_idle, marker='o', linestyle='-', label='Idle Power Consumption')
+
+# Customize plot
+plt.title("Power Levels in dBm vs Power in Watts")
+plt.xlabel("Antenna Power in dBm (decibel-milliwatts)")
+plt.ylabel("Power consumption in Watts")
+
+# Position legend outside the plot
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+plt.grid(True)
+
+# Adjust layout to ensure nothing is cut off
+plt.tight_layout(pad=3.0)  # Increase padding around the figure
+plt.show()
+
+Changes Made
+
+plt.figure(figsize=(10, 6)):
+
+Increases the width (and optionally height) of the plot to ensure there’s space for the legend.
+
+tight_layout(pad=3.0):
+
+Adds padding around the plot to ensure that elements like the legend are not clipped.
+
+Legend Adjustment:
+
+You can further tweak the bbox_to_anchor values (e.g., (1.1, 0.5)) to ensure the legend is entirely visible without interfering with the plot.
+
+This should resolve the issue of the legend being cut off, while maintaining a clear and readable layout.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+what figsize do u recommend
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+The optimal figure size (figsize) depends on the amount of data and how much space you need for the plot and the legend. Since you are placing the legend outside the plot, a wider figure is generally a good idea. Here are my recommendations:
+
+Suggested Figure Sizes
+
+Standard Display:
+
+figsize=(10, 6) — This works well for most cases and ensures the legend has enough space on the side.
+
+If Legend is Large:
+
+figsize=(12, 6) — Adds extra width to prevent the legend from feeling cramped.
+
+For High-Resolution or Presentation:
+
+figsize=(14, 8) — Use this if you need the plot to look large and clear for presentations or publications.
+Example
+python
+Kopieren
+Bearbeiten
+plt.figure(figsize=(12, 6))  # Wide enough for the plot and legend
+
+
+Start with figsize=(10, 6) and increase the width (first number) as needed until the legend and plot fit comfortably.
+
+4o

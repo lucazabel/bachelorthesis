@@ -1,0 +1,91 @@
+Du:
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+
+file_path = "output_array.txt"
+
+arr = None
+
+if os.path.exists(file_path):
+    arr = np.loadtxt(file_path)
+
+# arr[np.isnan(arr)] = 0.0
+
+flat_array = arr.flatten()
+filtered_array = flat_array[~np.isnan(flat_array)]
+unique_values, counts = np.unique(filtered_array, return_counts=True)
+
+for i in range(1, len(counts)):
+    counts[i] = counts[i-1]+counts[i]
+
+x = unique_values
+
+plt.plot(x, counts)
+
+plt.xlabel('power levels in dBm (decibel-milliwatts)')
+plt.ylabel('Reached Nodes')
+plt.title('Reached nodes for each Powerlevel')
+
+# plt.savefig("plots/reached_nodes_to_powerlevel")
+plt.show()
+
+Change the whole code so that i can create a scatter plot with regression instead of line plot
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+Below is your modified code to create a scatter plot with a regression line instead of a line plot. The regression is computed using linear regression from numpy:
+
+python
+Kopieren
+Bearbeiten
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+
+file_path = "output_array.txt"
+
+arr = None
+
+# Load the data if the file exists
+if os.path.exists(file_path):
+    arr = np.loadtxt(file_path)
+
+# Flatten the array and filter NaN values
+flat_array = arr.flatten()
+filtered_array = flat_array[~np.isnan(flat_array)]
+unique_values, counts = np.unique(filtered_array, return_counts=True)
+
+# Compute cumulative counts
+for i in range(1, len(counts)):
+    counts[i] = counts[i - 1] + counts[i]
+
+x = unique_values
+y = counts
+
+# Scatter plot
+plt.scatter(x, y, color='blue', label='Data Points')
+
+# Linear regression
+coefficients = np.polyfit(x, y, 1)  # Fit a 1st-degree polynomial (linear regression)
+regression_line = np.polyval(coefficients, x)  # Compute the regression line values
+
+# Plot regression line
+plt.plot(x, regression_line, color='red', label='Regression Line')
+
+# Add labels, title, and legend
+plt.xlabel('Power Levels in dBm (decibel-milliwatts)')
+plt.ylabel('Reached Nodes')
+plt.title('Reached Nodes for Each Power Level')
+plt.legend()
+
+# Show plot
+plt.show()
+
+Changes Made:
+Scatter Plot: Used plt.scatter(x, y) for scatter plotting the data points.
+Regression: Applied linear regression using numpy.polyfit to compute the slope and intercept, and then calculated the regression line with numpy.polyval.
+Regression Line Plot: Added plt.plot() for the regression line in red color.
+Labels and Legends: Included a legend to differentiate between the data points and the regression line.
+4o

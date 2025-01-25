@@ -1,0 +1,137 @@
+Du:
+power_levels = [-17, -12, -10, -7, -5, -4, -3, -2, -1, 0.7, 1.3, 1.8, 2.3, 2.8, 3]
+    consumption_per_power = [] #consumption per powerlevel
+    for i in range(15):
+        temp = filtered_list[i * 30:(i + 1) * 30]
+        consumption_per_power.append([item for sublist in temp for item in sublist])
+    plt.figure(figsize=(12, 10))
+
+    # Create the boxplot with a swarm plot on top
+    sns.boxplot(data=consumption_per_power, whis=[0, 100], width=.6, showcaps=True)
+
+    # Customize the plot
+    plt.title("Power Levels in decibel-milliwatts compared to Power in Watts")
+    plt.xlabel("Antenna power in dBm (decibel-milliwatts")
+    plt.ylabel("Power in Watts")
+    plt.xticks(ticks=range(15), labels=power_levels)
+
+    for i, d in enumerate(consumption_per_power):
+        total_consumption = sum(d)
+        plt.text(i-0.3, max(d)+0.001, f"{round(total_consumption, 2)}")
+
+I want this a normal lineplot instead of boxplot.
+So consumption_per_power should contain an average
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To transform your boxplot into a line plot where each power_level corresponds to the average power consumption, you need to calculate the average for each consumption_per_power entry. Then, plot these averages as a line plot against the power_levels.
+
+Here's the adjusted code:
+
+python
+Kopieren
+Bearbeiten
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Calculate the average power consumption for each power level
+average_consumption_per_power = [sum(data) / len(data) for data in consumption_per_power]
+
+# Plot the line plot
+plt.figure(figsize=(12, 10))
+plt.plot(power_levels, average_consumption_per_power, marker='o', label='Average Power Consumption')
+
+# Customize the plot
+plt.title("Power Levels in Decibel-Milliwatts Compared to Power in Watts")
+plt.xlabel("Antenna Power in dBm (decibel-milliwatts)")
+plt.ylabel("Average Power in Watts")
+
+# Annotate each point with the average value
+for i, avg in enumerate(average_consumption_per_power):
+    plt.text(power_levels[i], avg, f"{round(avg, 2)}", ha='center', va='bottom')
+
+# Add legend and grid for clarity
+plt.legend()
+plt.grid(True)
+plt.show()
+
+Key Changes:
+Average Calculation: Replace each consumption_per_power entry with its average.
+python
+Kopieren
+Bearbeiten
+average_consumption_per_power = [sum(data) / len(data) for data in consumption_per_power]
+
+Line Plot: Use plt.plot() instead of sns.boxplot().
+Annotations: Annotate each average with its value using plt.text(). Adjust the placement (ha and va) for better readability.
+
+This code generates a clean line plot, showing the relationship between power levels in dBm and their average power consumption in Watts.
+
+4o
+~~~~~~~~~~~~~~~~~~~~~~
+Du:
+ok and now i want to cut out the 5 biggest and smallest values from each average
+~~~~~~~~~~~~~~~~~~~~~~
+ChatGPT:
+ChatGPT
+
+To remove the 5 largest and 5 smallest values from each dataset in consumption_per_power before calculating the average, you can use the following approach:
+
+Sort each list in consumption_per_power.
+Remove the first 5 (smallest) and last 5 (largest) values.
+Calculate the average of the remaining values.
+
+Here’s the updated code:
+
+python
+Kopieren
+Bearbeiten
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Remove the 5 largest and 5 smallest values and calculate the average
+filtered_averages = []
+for data in consumption_per_power:
+    if len(data) > 10:  # Ensure there are enough values to trim
+        sorted_data = sorted(data)
+        trimmed_data = sorted_data[5:-5]  # Remove 5 smallest and 5 largest
+        average = sum(trimmed_data) / len(trimmed_data)
+        filtered_averages.append(average)
+    else:
+        # If not enough data to trim, calculate the average as is
+        average = sum(data) / len(data)
+        filtered_averages.append(average)
+
+# Plot the line plot
+plt.figure(figsize=(12, 10))
+plt.plot(power_levels, filtered_averages, marker='o', label='Filtered Average Power Consumption')
+
+# Customize the plot
+plt.title("Power Levels in Decibel-Milliwatts Compared to Filtered Power in Watts")
+plt.xlabel("Antenna Power in dBm (decibel-milliwatts)")
+plt.ylabel("Filtered Average Power in Watts")
+
+# Annotate each point with the filtered average value
+for i, avg in enumerate(filtered_averages):
+    plt.text(power_levels[i], avg, f"{round(avg, 2)}", ha='center', va='bottom')
+
+# Add legend and grid for clarity
+plt.legend()
+plt.grid(True)
+plt.show()
+
+Explanation:
+Trim Extremes: Each list in consumption_per_power is sorted, and the 5 smallest and 5 largest values are removed.
+python
+Kopieren
+Bearbeiten
+trimmed_data = sorted_data[5:-5]
+
+Fallback for Short Lists: If a list has fewer than 10 elements, the average is calculated without trimming.
+Filtered Averages: Averages of the trimmed lists are stored in filtered_averages.
+Line Plot: The plot now represents these filtered averages.
+
+This ensures your line plot reflects a robust average, excluding potential outliers at both extremes.
+
+4o
