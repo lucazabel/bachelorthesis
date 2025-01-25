@@ -1,0 +1,4 @@
+[submodule "NEMO"]
+	path = NEMO
+	url = git@github.com:lucazabel/NEMO.git
+	branch = revision
